@@ -17,6 +17,7 @@
 \newcommand*\mcm@tokens@yearinput{}
 \newcommand*\mcm@tokens@monthinput{}
 \newcommand*\mcm@tokens@dayinput{}
+\newcommand*\mcm@tokens@date{}
 %%%% 编号专用页
 % 没有
 %% Declaration of Options
@@ -32,29 +33,44 @@
 %% Loading Package
 \RequirePackage{ifxetex}
 \RequireXeTeX
-\ifxetex\else
+\ifxetex
+  \RequirePackage{ctex}
+  \setmainfont{Times New Roman}
+\else
   \ClassError{mcmthesis}{You must use the `xelatex' driver\MessageBreak Please choose `xelatex'}{%
     Just choose `xelatex', no `pdflatex' or `latex' and so on.}
+  \RequirePackage{CJK}
+  \usepackage{newtxtext}
+  \usepackage{newtxmath}
 \fi
+
+
+
+
+
 % 支持中文的 ctex 宏包
 \RequirePackage{ctex}
 % 页面布局
 \RequirePackage{geometry}
+\geometry{top=25mm,bottom=25mm,left=25mm,right=25mm}
+\renewcommand*{\baselinestretch}{1.38}
 % 数学宏包
 \RequirePackage{amsmath}
 \RequirePackage{amsfonts}
 \RequirePackage{amssymb}
 \RequirePackage{bm}
-%\RequirePackage{titletoc}
+\RequirePackage{titlesec}
+\RequirePackage{titletoc}
 % 设置颜色
 \RequirePackage{xcolor}
+% \RequirePackage[x11names,svgnames,dvipsnames]{xcolor}
 % 插入图片
 \RequirePackage{graphicx}
 \RequirePackage{float}
 % 表格
-\RequirePackage{array}
+\RequirePackage{array,lastpage}
 %% 长表格
-\RequirePackage{longtable}
+\RequirePackage{longtable,tabularx}
 %% booktabs 提供了\toprule 等命令.
 \RequirePackage{booktabs,tabularx}
 %% multirow 支持在表格中跨行
@@ -71,8 +87,14 @@
 % 插入链接
 \RequirePackage{url}
 % 绘图的包
-%\RequirePackage{tikz}
-%\usetikzlibrary{snakes}
+\RequirePackage{tikz}
+\usetikzlibrary{snakes}
+
+
+\RequirePackage[framemethod=TikZ]{mdframed}
+\RequirePackage{url}
+\RequirePackage{subcaption}
+
 
 % 字图与子标题
 \RequirePackage{subcaption}
@@ -136,10 +158,7 @@
 \RequirePackage{hyperref}
 % 智能自动化交叉引用
 \RequirePackage{cleveref}
-%% Document Layout
-% 页面布局
-\geometry{top=25mm,bottom=25mm,left=25mm,right=25mm}
-\renewcommand*{\baselinestretch}{1.38}
+
 % 修改tabular 环境, 设置表格中的行间距为正文行间距.
 \let\mcm@oldtabular\tabular
 \let\mcm@endoldtabular\endtabular
@@ -150,9 +169,26 @@
 {\mcm@endoldtabular\egroup}
 % 每行缩进两个汉字
 \setlength\parindent{2em}
+% 设置页眉（参赛编号、页码）
+\newcommand{\team}{Team \#\ \mcm@tokens@baominghao}
+\RequirePackage{fancyhdr}
+\pagestyle{fancy}
+
+% \fancypagestyle{frontmatterstyle}{% style for frontmatter
+%   \fancyhf{}% clear fields
+%   \fancyhf{}
+%   \lhead{\small \team}
+%   \rhead{}
+% }
+\fancypagestyle{mainmatterstyle}{% style for mainmatter
+  \fancyhf{}
+  \lhead{\small \team}
+  \rhead{\small  Page \thepage\ of \pageref{LastPage}}
+  \fancyfoot[C]{\thepage}
+}
 % 设置字体
 \setmainfont{Times New Roman}
-%\setmonofont{Courier New}
+% \setmonofont{Courier New}
 \setsansfont{Arial}
 \setCJKfamilyfont{kai}[AutoFakeBold]{simkai.ttf}
 \newcommand*{\kai}{\CJKfamily{kai}}
@@ -224,6 +260,8 @@
   labelsep=0.5em, % 包含标签的盒子与列表项的第一行文本之间的间隔
   labelwidth=2em % 包含标签的盒子的正常宽度；若实际宽度更宽，则使用实际宽度。
 }
+
+
 
 % 超链接
 \hypersetup{%
@@ -467,15 +505,15 @@
 \renewcommand\thesubsection{\arabic{section}\thinspace.\thinspace\arabic{subsection}}
 \renewcommand\thesubsubsection{\thesubsection\thinspace.\thinspace\arabic{subsubsection}}
 \renewcommand\section{\@startsection{section}{1}{\z@}%
-  {-3.5ex \@plus -1ex \@minus -.2ex}%
+  {3.5ex \@plus 1ex \@minus -.2ex}%
   {2.3ex \@plus.2ex}%
   {\centering\normalfont\Large\bfseries}}
 \renewcommand\subsection{\@startsection{subsection}{2}{\z@}%
-  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {3.25ex \@plus 1ex \@minus -.2ex}%
   {1.5ex \@plus .2ex}%
   {\normalfont\large\bfseries}}
 \renewcommand\subsubsection{\@startsection{subsubsection}{3}{\z@}%
-  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {3.25ex \@plus 1ex \@minus -.2ex}%
   {1.5ex \@plus .2ex}%
   {\normalfont\normalsize\bfseries}}
 \renewcommand\paragraph{\@startsection{paragraph}{4}{\z@}%
@@ -592,7 +630,7 @@
 \newcommand*{\mcm@cap@appendixname}{附录}
 \newcommand*{\mcm@cap@abstractname}{摘要}
 %%%  中文关键字
-\newcommand*{\mcm@cap@keywordsname}{关键字}
+\newcommand*{\mcm@cap@keywordsname}{关键词}
 
 %%% 承诺书中的常量
 \newcommand*\mcm@commit@string@headname{赛区评阅编号（由赛区组委会填写）：}
