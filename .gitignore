@@ -196,4 +196,5 @@ fabric.properties
 # dr
 Datasets/*
 dr/prerequisite/*
+dr/figures/*
 Reference/*
