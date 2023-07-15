@@ -193,5 +193,7 @@ fabric.properties
 **/_site/*
 **/.ignore/*
 
-# 
+# dr
 Datasets/*
+dr/prerequisite/*
+Reference/*
