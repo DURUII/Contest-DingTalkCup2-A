@@ -1,5 +1,6 @@
 \documentclass[withoutpreface,bwprint]{cumcmthesis}
 \usepackage{bm}
+\usepackage{tablefootnote}
 
 \title{\zihao{3}{\heiti{2023年第二届“钉钉杯”大学生 \\ 大数据挑战赛论文}}}
 \tihao{A}
@@ -18,13 +19,10 @@
 \maketitle
 
 \medskip
-\begin{center}
-    
-    \begin{tabularx}{0.9\textwidth}{lc}
-        \zihao{4}{题 \qquad 目：}\hspace{1em} & \zihao{4}{\hspace{1em} 基于决策树的银行卡电信欺诈行为预测 \hspace{1em}} \\[-2pt]
-        \cline{2-2}
-    \end{tabularx}
-\end{center}
+\begin{tabularx}{0.9\textwidth}{lc}
+    \zihao{4}{题 \qquad 目：}\hspace{1em} & \zihao{4}{\hspace{3em} 智能手机用户监测数据分析 \hspace{3em}} \\[-2pt]
+    \cline{2-2}
+\end{tabularx}
 
 \newblock
 
@@ -62,14 +60,205 @@
     \keywords{\TeX{}\quad  图片\quad   表格\quad  公式}
 \end{abstract}
 
-%目录  2019 明确不要目录，我觉得这个规定太好了
+%目录
 \tableofcontents
 \newpage
 
 \pagestyle{mainmatterstyle}
 \setcounter{page}{1}
-\section{模板的基本使用}
+\section{问题重述}
 
+\subsection{问题背景}
+
+智能手机已成为现代社会人们生活不可或缺的一部分，其普及和发展给人们带来了巨大的生活便利和娱乐享受。近年中国智能手机市场品牌竞争进一步加剧，中国超越美国成为全球第一大智能手机市场。随着智能手机市场快速增长，智能手机用户群体愈发多样，智能手机软件满目琳琅，研究智能手机用户的行为模式和使用偏好对于理解用户需求、预测用户行为和优化产品与服务具有重要意义。通过对智能手机用户监测数据的分析，可以为智能手机制造商、软件开发者、广告商和营销人员等提供有益的信息及有价值的洞察，指导他们制定战略和决策，更好地贴合用户需求并提供更佳的用户体验。
+
+\subsection{问题要求}
+
+\subsection{问题分析}
+
+\newpage
+\section{数据探索、预处理与特征提取}
+
+经过数据探索，发现原始数据存在一定的错误、冗余及缺失。数据清洗后，尝试从原始数据（数值、类别、时间）中提炼与统计特征，以便于问题一和问题二的解决。
+
+\subsection{符号说明与数据概览}
+
+原始数据集包含app类别辅助表格（$A$.$\text{app\_class.csv}$）与21天监测数据（$B^*$.$\text{dayxx.txt}$），来源、符号、意义及数据类型如下\cref{tab:001}~所示。
+
+\begin{table}[!htbp]
+    \caption{原始数据集特征表}\label{tab:001} \centering
+    \begin{tabular}{ccccc}
+        \toprule[1.5pt]
+        来源       & 符号            & 意义              & 类型   \\
+        \midrule[1pt]
+        $A\&B^*$ & $appid$       & 用户的id，唯一标识一名用户  & 类别变量 \\
+        $A$      & $app\_class$  & 应用的id，唯一标识一个APP & 类别变量 \\
+        $B^*$    & $app\_type$   & APP类型：系统自带、用户安装 & 类别变量 \\
+        $B^*$    & $start\_day$  & 使用起始天，取值1-30    & 数值变量 \\
+        $B^*$    & $start\_time$ & 使用起始时间          & 时间变量 \\
+        $B^*$    & $end\_day$    & 使用结束天           & 数值变量 \\
+        $B^*$    & $end\_time$   & 使用结束时间          & 时间变量 \\
+        $B^*$    & $duration$    & 使用时长（秒）         & 数值变量 \\
+        $B^*$    & $up\_flow$    & 上行流量            & 数值变量 \\
+        $B^*$    & $down\_flow$  & 下行流量            & 数值变量 \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
+
+将$B^*$与$A$进行“左连接”得到$B$（同时舍弃重复值），$app\_class$为a～t的代表$A$中20个常用类别（$B$含3931种）；$NaN$则代表所属类别未知的不常用APP（$B$含32506种）。$B$中，在类别已知的常用20类APP中，t类数量最多（1406），r类最少（41）。
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.865\textwidth]{app_class_countplot_in_days}
+    \caption{B中各类APP计数图}
+    \label{fig:001}
+\end{figure}
+
+\subsection{数据探索之类别变量}
+
+\subsubsection{单一变量}
+\begin{table}[!htbp]
+    \caption{类别变量统揽描述（以day01为例）}\label{tab:002} \centering
+    \begin{tabular}{llrll}
+        \toprule[1.5pt]
+               & $uid$                            & $appid$ & $app\_type$ & $app\_class$ \\
+        \midrule[1pt]
+        count  & 5335803                          & 5335803 & 5335803     & 5335803      \\
+        unique & 35451                            & 11021   & 4           & 21           \\
+        top    & A9E4AAC5B8E05D2A4E35E0D4F2994F37 & 3309    & usr         & NaN          \\
+        freq   & 2629                             & 924309  & 2987468     & 2432606      \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
+
+据\cref{tab:002}~，$app\_type$只有两类【系统预装、用户安装】，存在异常。通过数据探索，发现表格存在['sys', 'usr', '用户', '预装']四种取值，故将中文全部替换成英文。
+
+$app\_class$有$21$类，这是因为在“左连接”操作时，将$NaN$也作为一种APP类型，这是由于此处数据缺失本身就代表一种资讯（小众APP），并非随机发生或人为故意。如果将$NaN$也视作一种$app\_class$，那么数据$B$不存在缺失值。
+
+\subsubsection{天数变化}
+另外，从21天的类型变量数据可以发现，每日活跃用户、APP、日志条数在各天都有所差异，如\cref{fig:002}~所示。
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}[c]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.95\textwidth]{relplot_line_day_val_logs}
+        \subcaption{日志条数}
+        \label{fig:002-a}
+    \end{minipage}
+    \begin{minipage}[c]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.95\textwidth]{relplot_line_day_val_users}
+        \subcaption{活跃用户数}
+        \label{fig:002-b}
+    \end{minipage}
+    \begin{minipage}[c]{0.3\textwidth}
+        \centering
+        \includegraphics[width=0.95\textwidth]{relplot_line_day_val_apps}
+        \subcaption{活跃APP数}
+        \label{fig:002-c}
+    \end{minipage}
+    \caption{day01～day21类别变量的变化折线图}
+    \label{fig:002}
+\end{figure}
+
+粗略观察\cref{fig:002-b}，活跃用户数在$7$和$21$存在明显波谷，似乎和“星期”有某种关联；对照\cref{fig:002-a}、\cref{fig:002-b}、\cref{fig:002-c}三表分析，似乎APP活跃情况（种类、请求）与天数有所关联，甚至可以猜测某些小众APP被某些特定用户群体所使用甚至是青睐。
+
+\subsubsection{变量关联}
+
+APP自身包含$appid$、$app\_class$以及$app\_type$属性，因此可以抽取这三列建立$C$。
+
+\begin{table}[!htbp]
+    \caption{APP统揽描述}\label{tab:003} \centering
+    \begin{tabular}{lrll}
+        \toprule
+               & $appid$ & $app\_type$ & $app\_class$ \\
+        \midrule
+        count  & 37276   & 37276       & 37276        \\
+        unique & 36437   & 2           & 21           \\
+        top    & 19582   & usr         & NaN          \\
+        freq   & 2       & 34153       & 32958        \\
+        \bottomrule
+    \end{tabular}
+\end{table}
+
+据\cref{tab:003}~，数据探索发现有839个app多重类型，即对于某些用户而言，该软件为系统预装，对另一些而言，则为自行安装。这似乎表明，不同的用户在软件下载与安装层面，有可相互区分的行为特征。另外，21类APP的数量情况如\cref{fig:003}~所示。
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.95\textwidth]{catplot_count_app_class}
+    \caption{21类APP计数图}
+    \label{fig:003}
+\end{figure}
+
+据\cref{fig:003}~，未分类的APP并不是小数目（有一部分为系统预装），$t$类在APP多样性表现上依然出众。此外，不同种类的APP就类型（预装、用户）而言相差较为悬殊，例如：$g$类，系统预装相对较多；其余类别，用户预装较为普遍，尤其是$d$和$r$类。
+
+值得区分的是，在新建APP统计数据$C$中，计数图反映了各类APP的多样程度（市场垄断程度）。而在监测数据$B$中，某个（类）APP请求日志（行数）计数图则反映了该用户在使用各类APP时的活跃（点击）行为，这将在下一小节进行探索。
+
+\subsection{数据探索之数值变量}
+
+\subsubsection{单一变量}
+
+\subsubsection{天数变化}
+
+\subsubsection{变量关联}
+
+\subsection{数据探索之时间变量}
+
+
+
+\subsubsection{跨域检测}
+
+\subsubsection{活跃时段}
+
+\subsection{数据直觉与特征建立}
+
+
+
+\subsubsection{数据直觉}
+
+\subsubsection{用户量化}
+
+\subsubsection{特征变换}
+
+到目前，
+
+向量化。
+
+\newpage
+\section{问题一：聚类分析与用户画像}
+
+针对问题一，赛题要求(1)根据用户常用所属的20类APP的数据将用户划分成若干个不相交的子集（簇、标签），(2)对不同类别的用户画像，分析不同群体用户的特征。
+
+首先，在充分理解赛题、探索数据的基础上，制定各项标签维度，将用户向量化；然后，分别采用原型聚类（K-Means）、密度聚类（DBSCAN）、层次聚类（AGNES）的三类算法对用户进行聚类，采用作为评价指标，选择合理的聚类数量K值；最后，根据聚类结果对不同类别的用户画像，并且分析不同群体用户的特征。
+
+\subsection{向量化}
+
+用户画像是对现实生活。首先要对于用户进行数学建模，即用一个向量表征一名用户。每名用户由uid唯一标识，
+
+\subsection{聚类}
+
+\subsection{K-Means}
+
+\subsubsection{DBSCAN}
+
+\subsubsection{AGNES}
+
+选择特定的维度，将用户向量化。
+
+\subsection{用户画像}
+
+抽样，Incremental PCA，降维，保留80\%的原始信息
+
+稀疏矩阵
+
+余弦相似度，相似度标签
+
+\newpage
+\section{问题二：时间序列的分类回归}
+
+\newpage
+\subsection{你好}
 要使用 \LaTeX{} 来完成建模论文，首先要确保正确安装一个 \LaTeX{} 的发行版本。
 
 \begin{itemize}
@@ -166,29 +355,6 @@
 
 图片并排的需求解决方式多种多样，下面用 \verb|minipage| 环境来展示一个简单的例子。注意，以下例子用到了 \verb|subcaption| 命令，需要加载 subcaption 宏包。
 
-\begin{figure}
-    \centering
-    \begin{minipage}[c]{0.3\textwidth}
-        \centering
-        \includegraphics[width=0.95\textwidth]{f1}
-        \subcaption{流程图}
-        \label{fig:sample-figure-a}
-    \end{minipage}
-    \begin{minipage}[c]{0.3\textwidth}
-        \centering
-        \includegraphics[width=0.95\textwidth]{f1}
-        \subcaption{流程图}
-        \label{fig:sample-figure-b}
-    \end{minipage}
-    \begin{minipage}[c]{0.3\textwidth}
-        \centering
-        \includegraphics[width=0.95\textwidth]{f1}
-        \subcaption{流程图}
-        \label{fig:sample-figure-c}
-    \end{minipage}
-    \caption{多图并排示例}
-    \label{fig:sample-figure}
-\end{figure}
 这相当于整体是一张大图片，大图片引用是\cref{fig:sample-figure}，子图引用别分是\cref{fig:sample-figure-a}、\cref{fig:sample-figure-b}、\cref{fig:sample-figure-c}。
 
 如果原本两张图片的高度不同，但是希望它们缩放后等高的排在同一行，参考这个例子：
@@ -208,9 +374,9 @@
 \end{figure}
 
 \section{绘制普通三线表格}
-表格应具有三线表格式，因此常用 booktabs宏包，其标准格式如\cref{tab:001}~所示。
+表格应具有三线表格式，因此常用 booktabs宏包，其标准格式如\cref{tab:404}~所示。
 \begin{table}[!htbp]
-    \caption{标准三线表格}\label{tab:001} \centering
+    \caption{标准三线表格}\label{tab:404} \centering
     \begin{tabular}{ccccc}
         \toprule[1.5pt]
         $D$(in) & $P_u$(lbs) & $u_u$(in) & $\beta$ & $G_f$(psi.in) \\
