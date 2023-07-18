@@ -1,0 +1,9 @@
+matplotlib~=3.7.2
+numpy~=1.23.5
+pandas~=2.0.3
+scienceplots~=2.1.0
+scikit_learn~=1.3.0
+seaborn~=0.12.2
+tqdm~=4.64.0
+xgboost~=1.7.6
+ydata_profiling~=4.3.1
