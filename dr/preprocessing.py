@@ -1,38 +1,41 @@
 from tqdm.auto import tqdm
 import pandas as pd
+import os
 
 
-def generate_pickle(start_day=1, end_day=21):
-    """
-    对原始txt文件进行粗处理：
-    - 约束数据格式（类别、数值、时间）
-    - 连接辅助表，重设列标签
-    """
+def generate_pickle_origin(start_day=1, end_day=21):
+    # 读取类型数据
+    app = pd.read_csv(
+        filepath_or_buffer='../Datasets/app_class.csv',
+        header=None
+    ).drop_duplicates()
 
-    assert 1 <= end_day <= 21
-
-    # 辅助表格，常用APP类别
-    # 发现：原始表格存在重复值
-    app = pd.read_csv('../Datasets/app_class.csv',
-                      header=None).drop_duplicates()
+    # 更新列标签
     app.columns = ['appid', 'app_class']
 
+    # 新增一笔虚拟资料（NaN）
+    app = pd.concat(
+        objs=[pd.DataFrame({"appid": [-404], "app_class": ['NaN']}), app],
+        ignore_index=True
+    )
+
     # 约束数据格式
-    # 便于对NaN进行EDA，增加了一笔虚拟资料
-    app = pd.concat([pd.DataFrame({"appid": [-404], "app_class": ['NaN']}), app],
-                    ignore_index=True)
     app['app_class'] = app['app_class'].astype('category')
     app['appid'] = app['appid'].astype('category')
 
+    # 初赛数据集day1～21
     for i in tqdm(range(start_day, end_day + 1)):
-        # 读取初赛数据集
-        df = pd.read_csv(f'../Datasets/day{str(i).zfill(2)}.txt', header=None)
+        # 读取监测数据
+        df = pd.read_csv(
+            filepath_or_buffer=f'../Datasets/day{str(i).zfill(2)}.txt',
+            header=None
+        ).drop_duplicates()
 
-        # 设置列标签
+        # 更新列标签
         df.columns = ['uid', 'appid', 'app_type', 'start_day', 'start_time',
                       'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']
 
-        # 连接辅助表，仅
+        # 新增app_class，对于所属类别未知的APP，类别记作NaN
         df = df.merge(app, on='appid', how='left')
         df['app_class'] = df['app_class'].fillna('NaN')
 
@@ -40,16 +43,89 @@ def generate_pickle(start_day=1, end_day=21):
         df['appid'] = df['appid'].astype('category')
         df['uid'] = df['uid'].astype('category')
         df['app_type'] = df['app_type'].astype('category')
-        df['start_time'] = pd.to_datetime(df['start_time'], format="%H:%M:%S")
-        df['end_time'] = pd.to_datetime(df['end_time'], format="%H:%M:%S")
 
+        # df['start_time'] = pd.to_datetime(df['start_time'], format="%H:%M:%S")
+        # df['end_time'] = pd.to_datetime(df['end_time'], format="%H:%M:%S")
         # 使用 pandas.Timestamp 将 `day` 和 `time` 合并
-        df['start_time_new'] = df.apply(
-            lambda x: x['start_time'] + pd.Timedelta(x['start_day'] - 1, unit='D'), axis=1)
-        df['end_time_new'] = df.apply(
-            lambda x: x['end_time'] + pd.Timedelta(x['end_day'] - 1, unit='D'), axis=1)
+        # df['start_time_new'] = df.apply(
+        #     lambda x: x['start_time'] + pd.Timedelta(x['start_day'] - 1, unit='D'), axis=1)
+        # df['end_time_new'] = df.apply(
+        #     lambda x: x['end_time'] + pd.Timedelta(x['end_day'] - 1, unit='D'), axis=1)
+
+        df = df[['uid', 'appid', 'app_type', 'app_class', 'start_day', 'start_time',
+                 'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']]
 
         # 使用 pickle 存储
-        df = df[['uid', 'app_type', 'app_class', 'start_time_new',
-                 'end_time_new', 'duration', 'up_flow', 'down_flow']]
-        df.to_pickle(f'../Datasets/day{str(i).zfill(2)}_new.pkl')
+        df.to_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+
+
+def generate_pickle_1(start_day=1, end_day=21):
+    """
+    数据融合：day01~day21
+    建立特征：连接辅助表，新增app_class
+    清洗数据：异常值、缺失值、重复值
+    """
+
+    # 读取类型数据
+    app = pd.read_csv(
+        filepath_or_buffer='../Datasets/app_class.csv',
+        header=None
+    ).drop_duplicates()
+
+    # 更新列标签
+    app.columns = ['appid', 'app_class']
+
+    # 新增一笔虚拟资料（NaN）
+    app = pd.concat(
+        objs=[pd.DataFrame({"appid": [-404], "app_class": ['NaN']}), app],
+        ignore_index=True
+    )
+
+    # 约束数据格式
+    app['app_class'] = app['app_class'].astype('category')
+    app['appid'] = app['appid'].astype('category')
+
+    # 初赛数据集day1～21
+    for i in tqdm(range(start_day, end_day + 1)):
+        # 读取监测数据
+        df = pd.read_csv(
+            filepath_or_buffer=f'../Datasets/day{str(i).zfill(2)}.txt',
+            header=None
+        ).drop_duplicates()
+
+        # 更新列标签
+        df.columns = ['uid', 'appid', 'app_type', 'start_day', 'start_time',
+                      'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']
+
+        # 问题：start_day为负数，甚至持续时间长达一千年
+        df = df.query('start_day >=0 & duration <= 9159')
+
+        # 新增app_class，对于所属类别未知的APP，类别记作NaN
+        df = df.merge(app, on='appid', how='left')
+        df['app_class'] = df['app_class'].fillna('NaN')
+        # 问题：app_type 列存在中文
+        df['app_class'] = df['app_class'].replace({'用户': 'usr', '预装': 'sys'})
+
+        # 约束数据格式
+        df['appid'] = df['appid'].astype('category')
+        df['uid'] = df['uid'].astype('category')
+        df['app_type'] = df['app_type'].astype('category')
+
+        # df['start_time'] = pd.to_datetime(df['start_time'], format="%H:%M:%S")
+        # df['end_time'] = pd.to_datetime(df['end_time'], format="%H:%M:%S")
+        # 使用 pandas.Timestamp 将 `day` 和 `time` 合并
+        # df['start_time_new'] = df.apply(
+        #     lambda x: x['start_time'] + pd.Timedelta(x['start_day'] - 1, unit='D'), axis=1)
+        # df['end_time_new'] = df.apply(
+        #     lambda x: x['end_time'] + pd.Timedelta(x['end_day'] - 1, unit='D'), axis=1)
+
+        df = df[['uid', 'appid', 'app_type', 'app_class', 'start_day', 'start_time',
+                 'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']]
+
+        # 使用 pickle 存储
+        df.to_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+
+
+def generate_features(start_day=1, end_day=21):
+    for i in tqdm(range(start_day, end_day + 1)):
+        df = pd.read_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
