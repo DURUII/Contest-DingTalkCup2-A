@@ -38,34 +38,6 @@
     本手册是相应的参考, 其 中提供了一些环境和命令可以让模板的使用更为方便. 同时需要注意, 使用者需要有一 定的 \LaTeX{} 的使用经验,
     至少要会使用常用宏包的一些功能, 比如参考文献，数学公式，图片使用，列表环境等等. 例子文件参看 \texttt{example.tex}.
 
-    \begin{mdframed} [%
-            roundcorner=5pt,
-            linecolor=gray!50,
-            outerlinewidth=0.5pt,
-            middlelinewidth=0.3pt, backgroundcolor=gray!2,
-            innertopmargin=\topskip, frametitle={2020 年建模比赛格式变化说明},
-            frametitlefont= \bfseries,frametitlerule=true,frametitlealignment =\raggedright\noindent,
-            frametitlerulewidth=.5pt, frametitlebackgroundcolor=gray!2,]
-        今年的格式变化主要就是三个地方，如下：
-        \begin{enumerate}
-            \item 论文第一页为承诺书，\textbf{\color{red}内容进行了调整}。
-
-            \item 编号页格式进行了格式调整。
-
-            \item 这是19年调整了，这里延续说明下。论文正文（\textbf{\color{red}不要目录}，尽量控制在20页以内）；正文之后是论文附录（页数不限）。
-
-        \end{enumerate}
-
-    \end{mdframed}
-
-    \url{https://www.latexstudio.net} 陆续推出了更优质的资源，欢迎学习 。
-
-    欢迎大家到QQ群里沟通交流：91940767/478023327/640633524。我们也开通了问答区交流 \LaTeX{}技术：\url{https://ask.latexstudio.net}，欢迎大家前来交流，有问题就来这里，与大神零距离。
-
-    \uwave{关注我们的微信公众号}：
-
-    \centerline{\includegraphics[width=6cm]{gongzhonghao2}}
-
     \keywords{\TeX{}\quad  图片\quad   表格\quad  公式}
 \end{abstract}
 
@@ -302,7 +274,7 @@ APP自身包含$appid$、$app\_class$以及$app\_type$属性，因此可以抽�
 基于对数据集的深入探索及理解，提出简易用户模型：
 
 \begin{table}[!htbp]
-    \caption{简易用户模型}\label{tab:002} \centering
+    \caption{简易用户模型}\label{tab:006} \centering
     \begin{tabular}{lllllrlrlrrr}
         \toprule[1.5pt]
         符号             & 意义                               & 维度                   \\
@@ -324,9 +296,12 @@ APP自身包含$appid$、$app\_class$以及$app\_type$属性，因此可以抽�
 
 聚类指将数据样本对象划分成若干类（簇、标签）并尽可能的保证“类内紧凑”、“类间独立”\cite{数据仓库与数据挖掘}。不同的量化指标、不同的相似度量（距离定义），往往会带来迥异的聚类结果。一般来说，量化指标维度数目越多，算法运行时间越长、结论可解释性越弱。
 
-关于用户画像的量化指标，陈\cite{陈纯}等人、成\cite{成雪}等人从各类日均屏幕使用时间切入；武\cite{武慧娟}等人从APP数量、阅读时间、消费等特征对阅读类APP使用人群进行聚类解读；侯\cite{侯金凤}针对每日手机使用时长、使用频次、使用偏好等特征对用户进行建模；韦\cite{韦磊}基于“安装数量”、“打开次数”、“使用时长”、“工作日使用时长”、“周末使用时长”构建用户特征。
+关于用户画像的量化指标，陈\cite{陈纯}、成\cite{成雪}等人从\uwave{日均屏幕使用时间}切入；
+武\cite{武慧娟}等人从\uwave{APP数量、阅读时间}等特征对阅读类APP使用人群进行聚类解读；
+侯\cite{侯金凤}针对\uwave{每日手机使用时长}、\uwave{使用频次}、\uwave{使用偏好}等特征对用户进行建模；
+韦\cite{韦磊}基于\uwave{安装数量}、\uwave{打开次数}、\uwave{使用时长}、\uwave{工作日使用时长}、\uwave{周末使用时长}构建用户特征。
 
-首先，尝试选择前7日各类APP使用时长、使用频次、上行流量、下行流量之和作为量化特征，共计$20*4=80$维；对于不同的量纲特征，分别扣除均值，除以标准差以进行数值标准化。Pearson相关热力\cref{fig:pearson}~显示，各类APP时长、频次、流量成弱正相关。
+首先，为避免数据泄漏，仅选择前7日各类APP总时长、频次、上下行流量作为量化特征，共计$20 \times 4=80$维；对于不同的量纲特征，分别扣除均值，除以标准差以进行数值标准化。Pearson相关热力\cref{fig:pearson}~显示，各类APP时长、频次、流量成弱正相关。
 
 \begin{figure}[!htbp]
     \centering
@@ -363,7 +338,7 @@ APP自身包含$appid$、$app\_class$以及$app\_type$属性，因此可以抽�
 
 \subsection{算法概述与K值选择}
 
-注：本小节所使用算法及评价指标均采用scikit\_learn\cite{sklearn}开源库实现。
+注：本小节所使用算法及评价指标均采用scikit\_learn\cite{sklearn}实现。
 
 \subsubsection{原型聚类：K-Means++}
 
@@ -385,10 +360,11 @@ K-Means是一种简单、高效的聚类算法，假设聚类结构能通过一�
     \label{fig:009}
 \end{figure}
 
-\subsubsection{层次聚类：AGNES}
+\subsubsection{层次聚类：BIRCH+AGNES}
 
 AGNES算法（Agglomerative
-Nesting），以自底向上方式，不断重复合并，产生不同粒度（层次）的聚类结果，一般最终预设聚类数目为1。该算法可通过聚类谱系图（dendrogram）可视化，算法执行流程如下：
+Nesting），以自底向上方式，不断重复合并，产生不同粒度（层次）的聚类结果，一般最终预设聚类数目为1。该算法默认采用“欧式距离”进行度量样本距离，采用“离差平方和”（ward
+linkage）作为簇距离度量函数，可通过聚类谱系图（dendrogram）可视化，算法执行流程如下：
 
 \IncMargin{1em}
 \begin{algorithm} \SetKwData{Left}{left}\SetKwData{This}{this}\SetKwData{Up}{up} \SetKwFunction{Union}{Union}\SetKwFunction{FindCompress}{FindCompress} \SetKwInOut{Input}{input}\SetKwInOut{Output}{output}
@@ -433,33 +409,223 @@ Nesting），以自底向上方式，不断重复合并，产生不同粒度（�
     q=q-1
     }
     \caption{AGNES算法}
-    \label{algo:001}
 \end{algorithm}
 \DecMargin{1em}
 
-默认采用“欧式距离”进行度量样本距离，采用“离差平方和”（ward linkage）作为簇距离度量函数。该算法执行结果见下页：
+AGNES算法时间复杂度为立方级别，对于本题万级别用户而言，耗费时间过长。因此，本文首先采用BIRCH\cite{birch}聚类算法得到初步聚类质心，作为AGNES算法的输入。BIRCH算法综合了层次凝聚和迭代的重定位方法首先用自底向上的层次算法，然后用迭代的重定位来改进结果。它的主要思想是：扫描数据库，建立一个初始存放于内存中的聚类
+特征树然后对聚类特征树的叶结点进行聚类\cite{birch2}。
 
-\subsubsection{密度聚类：DBSCAN}
-
-DBSCAN算法从样本密度的角度来考察样本之间的可连接性，要求聚类空间中的以$eps$为半径的邻域内所包含对象的数目不小于某一给定阈值$min\_samples$，并基于可连接样本不断扩展生长聚类簇以获得最终的聚类结果。DBSCAN不需要预先输入要划分的聚类个数，但是对$eps$、$min\_samples$参数敏感。记特征维度数目$N=3$、$K=2N-1$，按照以下经验值确定超参数\cite{eps1,eps2}：$min\_samples=2N=6$，将数据集各点与K-最近邻算法分类标签的距离排序，观察\cref{fig:008}~拐点$y$坐标确定$eps=2$。
+针对本题，首先将前7日44253名用户采用BIRCH算法聚类获得2827枚质心，而后AGNES对质心进行聚类，并绘制6层谱系图如下。
 
 \begin{figure}[!htbp]
     \centering
-    \includegraphics[width=.37\textwidth]{relplot_knn_distances}
-    \caption{数据集各点6-最近邻距离（排序）}
+    \includegraphics[width=.6\textwidth]{dendrogram}
+    \caption{BIRCH+AGNES谱系图}
     \label{fig:010}
 \end{figure}
 
-运行结果：聚类数量为$7$，噪点用户$539$名。
+\subsubsection{密度聚类：DBSCAN}
+
+DBSCAN算法从样本密度的角度来考察样本之间的可连接性，要求聚类空间中的以$eps$为半径的邻域内所包含对象的数目不小于某一给定阈值$min\_samples$，并基于可连接样本不断扩展生长聚类簇以获得最终的聚类结果\cite{机器学习}。算法将数据样本点分为三类：
+
+\begin{enumerate}
+    \item 核心点：在半径$eps$内含有不少于$min\_samples$数目的点
+    \item 边界点：在半径$eps$内点的数量小于$min\_samples$，但是落在核心点的邻域内
+    \item 噪声点：既不是核心点也不是边界点的点
+\end{enumerate}
+
+DBSCAN不需要预先输入要划分的聚类个数，但是对$eps$、$min\_samples$参数敏感。记特征维度数目$N=3$、$K=2N-1$，按照以下经验值确定超参数\cite{eps1,eps2}：$min\_samples=2N=6$，将数据集各点与K-最近邻算法分类标签的距离排序，观察\cref{fig:011}~拐点$y$坐标确定$eps=2$。
+
+运行结果如下，聚类数量为$7$，噪点用户$539$名。
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}[c]{0.49\textwidth}
+        \centering
+        \includegraphics[width=.62\textwidth]{relplot_knn_distances}
+        \caption{数据集各点6-最近邻距离（排序）}
+        \label{fig:011}
+    \end{minipage}
+    \begin{minipage}[c]{0.49\textwidth}
+        \centering
+        \includegraphics[width=.99\textwidth]{dbscan}
+        \caption{Visual Studio运行结果截图}
+        \label{fig:012}
+    \end{minipage}
+\end{figure}
 
 \subsection{算法比较与用户画像}
 
-共性。
+\subsubsection{算法比较}
+
+截取BIRCH+AGNES聚类数目为$6$时的聚类结果。先采用内部评价指标比较，再使用PCA降维特征绘制三维散点图，最后使用二维t-SNE\cite{tsne}可视化原始80维特征。
+
+\begin{table}[!htbp]
+    \caption{聚类算法内部评价指标}\label{tab:007} \centering
+    \begin{tabular}{llrrr}
+        \toprule[1.5pt]
+          & $Method$    & $Calinski-Harabasz$            & $Davies-Bouldin$           & $Silhouette$               \\
+        \midrule[1pt]
+        0 & K-Means++   & \textit{\textbf{32187.076682}} & \textit{\textbf{0.766536}} & 0.511919                   \\
+        1 & DBSCAN      & 2870.580217                    & 2.817892                   & \textit{\textbf{0.664019}} \\
+        2 & BIRCH+AGNES & 24732.933816                   & 0.860360                   & 0.622801                   \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=0.99\textwidth]{3d_kmeans}
+        \subcaption{K-Means++}
+        \label{fig:013-a}
+    \end{minipage}
+    \begin{minipage}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=0.99\textwidth]{3d_dbscan}
+        \subcaption{DBSCAN}
+        \label{fig:013-b}
+    \end{minipage}
+    \begin{minipage}[c]{0.25\textwidth}
+        \centering
+        \includegraphics[width=0.99\textwidth]{3d_brc_agn}
+        \subcaption{BIRCH+AGNES}
+        \label{fig:013-c}
+    \end{minipage}
+    \caption{PCA三维散点图}
+    \label{fig:013}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \begin{minipage}[c]{0.27\textwidth}
+        \centering
+        \includegraphics[width=0.99\textwidth]{2d_kmeans}
+        \subcaption{K-Means++}
+        \label{fig:014-a}
+    \end{minipage}
+    \begin{minipage}[c]{0.27\textwidth}
+        \centering
+        \includegraphics[width=0.99\textwidth]{2d_dbscan}
+        \subcaption{DBSCAN}
+        \label{fig:014-b}
+    \end{minipage}
+    \begin{minipage}[c]{0.27\textwidth}
+        \centering
+        \includegraphics[width=0.99\textwidth]{2d_brc_agn}
+        \subcaption{BIRCH+AGNES}
+        \label{fig:014-c}
+    \end{minipage}
+    \caption{t-SNE二维散点图}
+    \label{fig:014}
+\end{figure}
+
+散点图显示DBSCAN聚类较为笼统，K-Means++与BIRCH+AGNES类间区隔更清晰；从\cref{tab:007}~看，K-Means++更优，故根据K-Means++聚类结果对各用户群体画像。
+
+\subsubsection{用户画像}
+
+根据聚类结果进行数据可视化，可以获得5号人群对20种APP使用时长排序：
+
+$A$类APP：2号 $\approx$ 0号 $\ge$ 1号 $\approx$ 4号 $\ge$ 3号
+
+$B$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\ge$ 1号 $\ge$ 3号
+
+$C$类APP：3号 $\approx$ 1号 $\ge$ 2号 $\approx$ 0号 $\ge$ 4号
+
+$D$类APP：0号 $\ge$ 2号 $\ge$ 1号 $\approx$ 4号 $\ge$ 3号
+
+$E$类APP：0号 $\ge$ 2号 $\ge$ 1号 $\approx$ 4号 $\ge$ 3号
+
+$F$类APP：4号 $\ge$ 2号 $\ge$ 1号 $\approx$ 3号 $\ge$ 0号
+
+$G$类APP：2号 $\ge$ 0号 $\ge$ 1号 $\approx$ 4号 $\ge$ 3号
+
+$H$类APP：2号 $\ge$ 0号 $\ge$ 1号 $\approx$ 4号 $\ge$ 3号
+
+$I$类APP：2号 $\ge$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
+
+$J$类APP：2号 $\ge$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
+
+$K$类APP：2号 $\approx$ 0号 $\approx$ 4号 $\approx$ 1号 $\ge$ 3号
+
+$L$类APP：2号 $\approx$ 0号 $\approx$ 4号 $\approx$ 1号 $\approx$ 3号
+
+$M$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\approx$ 1号 $\approx$ 3号
+
+$N$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
+
+$O$类APP：2号 $\approx$ 0号 $\approx$ 4号 $\approx$ 1号 $\ge$ 3号
+
+$P$类APP：2号 $\approx$ 4号 $\ge$ 0号 $\approx$ 1号 $\ge$ 3号
+
+$Q$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
+
+$R$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
+
+$S$类APP：2号 $\approx$ 0号 $\approx$ 4号 $\ge$ 1号 $\ge$ 3号
+
+$T$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.9\textwidth]{stripplot_duration_cluster}
+    \caption{使用时长}
+    \label{fig:015}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.9\textwidth]{stripplot_count_cluster}
+    \caption{使用频次}
+    \label{fig:016}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.9\textwidth]{stripplot_up_flow_cluster}
+    \caption{上行流量}
+    \label{fig:018}
+\end{figure}
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.9\textwidth]{stripplot_down_flow_cluster}
+    \caption{下行流量}
+    \label{fig:019}
+\end{figure}
+
+就\cref{fig:008}~总体情况而言，4号用户群使用智能手机的频次最高，使用时长较高，可能需要时刻刷新手机；0号用户群使用智能手机的频次最低，时长最短，对手机依赖程度不强；1号、3号用户群使用流量最多；相对于4号而言，3号用户群不经常刷新手机，单次使用APP时间较长。
+
+\begin{table}[!htbp]
+    \caption{聚类各簇用户统计描述}\label{tab:008} \centering
+    \begin{tabular}{lrrrr}
+        \toprule[1.5pt]
+        $cluster$ & $count\_sum$ & $duration\_sum$ & $up\_flow\_sum$ & $down\_flow\_sum$ \\
+        \midrule[1pt]
+        0         & 375.776880   & 43624           & 392653844       & 65333138          \\
+        1         & 1177.867654  & 159571          & 5290795162      & 2128662377        \\
+        2         & 1342.008467  & 122244          & 1131347214      & 167123031         \\
+        3         & 1573.553903  & 232744          & 12630933652     & 8764644593        \\
+        4         & 2931.083175  & 196532          & 1621400073      & 235777958         \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
+
+就\cref{fig:020}~各类APP情况而言，1号、3号用户群似乎对C类APP“情有独钟”；F类APP使用情况最为参差，4号使用时长最长，降序依次是2号、3号、1号、0号。
+
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.99\textwidth]{plot_profile}
+    \caption{各类用户群对各类APP的使用时长（均值）}
+    \label{fig:020}
+\end{figure}
 
 \newpage
 \section{问题二：未来使用情况预测}
 
 \subsection{问题分析与流程思路}
+
+
 
 XGBoost、ResNet、
 
@@ -474,161 +640,6 @@ ARIMA
 验证
 
 \newpage
-\subsection{你好}
-要使用 \LaTeX{} 来完成建模论文，首先要确保正确安装一个 \LaTeX{} 的发行版本。
-
-\begin{itemize}
-    \item Mac 下可以使用 Mac\TeX{}
-    \item Linux 下可以使用 \TeX{}Live ；
-    \item windows 下可以使用 \TeX{}Live 或者 Mik\TeX{} ;
-\end{itemize}
-
-具体安装可以参考 \href{https://github.com/OsbertWang/install-latex-guide-zh-cn/releases/}{Install-LaTeX-Guide-zh-cn} 或者其它靠谱的文章。另外可以安装一个易用的编辑器，例如 \href{https://mirrors.tuna.tsinghua.edu.cn/github-release/texstudio-org/texstudio/LatestRelease/}{\TeX{}studio} 。
-
-使用该模板前，请阅读模板的使用说明文档。下面给出模板使用的大概样式。
-
-\begin{tcode}
-    \documentclass{cumcmthesis}
-    %\documentclass[withoutpreface,bwprint]{cumcmthesis} %去掉封面与编号页
-
-    \title{论文题目}
-    \tihao{A}            % 题号
-    \baominghao{4321}    % 报名号
-    \schoolname{你的大学}
-    \membera{成员A}
-    \memberb{成员B}
-    \memberc{成员C}
-    \supervisor{指导老师}
-    \yearinput{2017}     % 年
-    \monthinput{08}      % 月
-    \dayinput{22}        % 日
-
-    \begin{document}
-    \maketitle
-    \begin{abstract}
-        摘要的具体内容。
-        \keywords{关键词1\quad  关键词2\quad   关键词3}
-    \end{abstract}
-    \tableofcontents
-    \section{问题重述}
-    \subsection{问题的提出}
-    \section{模型的假设}
-    \section{符号说明}
-    \begin{center}
-        \begin{tabular}{cc}
-            \hline
-            \makebox[0.3\textwidth][c]{符号} & \makebox[0.4\textwidth][c]{意义} \\ \hline
-            D                              & 木条宽度（cm）                       \\ \hline
-        \end{tabular}
-    \end{center}
-    \section{问题分析}
-    \section{总结}
-    \begin{thebibliography}{9}%宽度9
-        \bibitem{bib:one} ....
-    \end{thebibliography}
-    \begin{appendices}
-        附录的内容。
-    \end{appendices}
-    \end{document}
-\end{tcode}
-
-根据要求，电子版论文提交时需去掉封面和编号页。可以加上 \verb|withoutpreface|  选项来实现，即：
-\begin{tcode}
-    \documentclass[withoutpreface]{cumcmthesis}
-\end{tcode}
-这样就能实现了。打印的时候有超链接的地方不需要彩色，可以加上 \verb|bwprint| 选项。
-
-另外目录也是不需要的，将 \verb|\tableofcontents| 注释或删除，目录就不会出现了。
-
-团队的信息填入指定的位置，并且确保信息的正确性，以免因此白忙一场。
-
-编译记得使用 \verb|xelatex|，而不是用 \verb|pdflatex|。在命令行编译的可以按如下方式编译：
-\begin{tcode}
-    xelatex example
-\end{tcode}
-或者使用 \verb|latexmk| 来编译，更推荐这种方式。
-\begin{tcode}
-    latexmk -xelatex example
-\end{tcode}
-
-下面给出写作与排版上的一些建议。
-
-\section{图片}
-
-建模中不可避免要插入图片。图片可以分为矢量图与位图。位图推荐使用 \verb|jpg,png| 这两种格式，避免使用 \verb|bmp| 这类图片，容易出现图片插入失败这样情况的发生。矢量图一般有 \verb|pdf,eps| ，推荐使用 \verb|pdf|  格式的图片，尽量不要使用 \verb|eps| 图片，理由相同。
-
-注意图片的命名，避免使用中文来命名图片，可以用英文与数字的组合来命名图片。避免使用\verb|1,2,3| 这样顺序的图片命名方式。图片多了，自己都不清楚那张图是什么了，命名尽量让它有意义。下面是一个插图的示例代码。
-\begin{figure}[!h]
-    \centering
-    \includegraphics[width=.6\textwidth]{smokeblk}
-    \caption{电路图}
-    \label{fig:circuit-diagram}
-\end{figure}
-
-注意 \verb|figure| 环境是一个浮动体环境，图片的最终位置可能会跑动。\verb|[!h]| 中的 \verb|h| 是 here 的意思， \verb|!| 表示忽略一些浮动体的严格规则。另外里面还可以加上 \verb|btp| 选项，它们分别是 bottom, top, page 的意思。只要这几个参数在花括号里面，作用是不分先后顺序的。page 在这里表示浮动页。
-
-\verb|\label{fig:circuit-diagram}| 是一个标签，供交叉引用使用的。例如引用图片 \verb|\cref{fig:circuit-diagram}| 的实际效果是\cref{fig:circuit-diagram}。图片是自动编号的，比起手动编号，它更加高效。\verb|\cref{label}| 由 \verb|cleveref| 宏包提供，比普通的 \verb|\ref{label}| 更加自动化。 \verb|label| 要确保唯一，命名方式推荐用图片的命名方式。
-
-图片并排的需求解决方式多种多样，下面用 \verb|minipage| 环境来展示一个简单的例子。注意，以下例子用到了 \verb|subcaption| 命令，需要加载 subcaption 宏包。
-
-这相当于整体是一张大图片，大图片引用是\cref{fig:sample-figure}，子图引用别分是\cref{fig:sample-figure-a}、\cref{fig:sample-figure-b}、\cref{fig:sample-figure-c}。
-
-如果原本两张图片的高度不同，但是希望它们缩放后等高的排在同一行，参考这个例子：
-\begin{figure}
-    \centering
-    \begin{minipage}[c]{0.48\textwidth}
-        \centering
-        \includegraphics[height=0.2\textheight]{cat}
-        \subcaption{一只猫}
-    \end{minipage}
-    \begin{minipage}[c]{0.48\textwidth}
-        \centering
-        \includegraphics[height=0.2\textheight]{smokeblk}
-        \subcaption{电路图}
-    \end{minipage}
-    \caption{多图并排示例}
-\end{figure}
-
-\section{绘制普通三线表格}
-表格应具有三线表格式，因此常用 booktabs宏包，其标准格式如\cref{tab:404}~所示。
-\begin{table}[!htbp]
-    \caption{标准三线表格}\label{tab:404} \centering
-    \begin{tabular}{ccccc}
-        \toprule[1.5pt]
-        $D$(in) & $P_u$(lbs) & $u_u$(in) & $\beta$ & $G_f$(psi.in) \\
-        \midrule[1pt]
-        5       & 269.8      & 0.000674  & 1.79    & 0.04089       \\
-        10      & 421.0      & 0.001035  & 3.59    & 0.04089       \\
-        20      & 640.2      & 0.001565  & 7.18    & 0.04089       \\
-        \bottomrule[1.5pt]
-    \end{tabular}
-\end{table}
-
-其绘制表格的代码及其说明如下。
-\begin{tcode}
-    \begin{table}[!htbp]
-        \caption[标签名]{中文标题}
-        \begin{tabular}{cc...c}
-            \toprule[1.5pt]
-            表头第1个格    & 表头第2个格    & ... & 表头第n个格                \\
-            \midrule[1pt]
-            表中数据(1,1) & 表中数据(1,2) & ... & 表中数据(1,n)             \\
-            表中数据(2,1) & 表中数据(2,2) & ... & 表中数据(2,n)             \\
-            ................................................... \\
-            表中数据(m,1) & 表中数据(m,2) & ... & 表中数据(m,n)             \\
-            \bottomrule[1.5pt]
-        \end{tabular}
-    \end{table}
-\end{tcode}
-
-\bigskip
-
-table环境是一个将表格嵌入文本的浮动环境。tabular环境的必选参数由每列对应一个格式字符所组成：c表示居中，l表示左对齐，r表示右对齐，其总个数应与表的列数相同。此外，\verb|@{文本}|可以出现在任意两个上述的列格式之间，其中的文本将被插入每一行的同一位置。表格的各行以\verb|\\|分隔，同一行的各列则以\&分隔。
-\verb|\toprule| 、\verb|\midrule| 和 \verb|\bottomrule| 三个命令是由booktabs宏包提供的，其中
-\verb|\toprule| 和 \verb|\bottomrule| 分别用来绘制表格的第一条（表格最顶部）和第三条（表格最底部）水平线，
-\verb|\midrule| 用来绘制第二条（表头之下）水平线，且第一条和第三条水平线的线宽为 1.5pt ，第二条水平线的线宽为 1pt
-。引用方法与图片的相同。
-
 \section{公式}
 
 数学建模必然涉及不少数学公式的使用。下面简单介绍一个可能用得上的数学环境。
@@ -752,12 +763,6 @@ table环境是一个将表格嵌入文本的浮动环境。tabular环境的必�
 \end{solution}
 由\cref{sol:example}我们知道了解环境的使用。
 
-\section{参考文献与引用}
-
-参考文献对于一篇正式的论文来说是必不可少的，在建模中重要的参考文献当然应该列出。\LaTeX{}在这方面的功能也是十分强大的，下面进介绍一个比较简单的参考文献制作方法。有兴趣的可以学习 \verb|bibtex| 或 \verb|biblatex| 的使用。
-
-\LaTeX{}的入门书籍可以看《\LaTeX{}入门》\cite{liuhaiyang2013latex}。这是一个简单的引用，用 \verb|\cite{bibkey}| 来完成。要引用成功，当然要维护好 bibitem 了。下面是个简单的例子。
-
 %参考文献
 \newpage
 \begin{thebibliography}{9}
@@ -775,86 +780,1421 @@ table环境是一个将表格嵌入文本的浮动环境。tabular环境的必�
     \bibitem{DB} Davies D L , Bouldin D W. A Cluster Separation Measure[J]. IEEE Transactions on Pattern Analysis and Machine Intelligence. 1979. PAMI-1(2):224-227
     \bibitem{SC} Peter R J . Silhouettes: A graphical aid to the interpretation and validation of cluster analysis[J]. Journal of Computational \& Applied Mathematics. 1987. 20
     \bibitem{sklearn} Swami A , Jain R. Scikit-learn: Machine Learning in Python[J]. Journal of Machine Learning Research. 2013, 12(10):2825-2830
+    \bibitem{birch} Zhang T , Ramakrishnan R. Miron Livny: BIRCH: An Efficient Data Clustering Method for Very Large Databases[J]. ACM SIGMOD Record. 1999. 25(2)
+    \bibitem{birch2} 赵玉艳,郭景峰,郑丽珍等. 一种改进的BIRCH分层聚类算法[J]. 计算机科学. 2008(03):180-182+208
     \bibitem{eps1} Sander J , Ester M , Kriegel H P ,et al. Density-Based Clustering in Spatial Databases: The Algorithm GDBSCAN and Its Applications[J]. Data Mining \& Knowledge Discovery. 1998. 2(2):169-194
     \bibitem{eps2} Schubert E , Sander J , Ester M ,et al. DBSCAN revisited, revisited: Why and how you should (still) use DBSCAN[J]. ACM Transactions on Database Systems, 2017, 42(3):1-21
+    \bibitem{tsne} Maaten L J P V D , Hinton G E. Visualizing High-Dimensional Data using t-SNE[J]. Journal of Machine Learning Research. 2008. 9:2579-2605.
     % \bibitem[6] 论文集： \[序号\] 著者.篇名.主编.论文集名\[C\].出版地.出版者.出版年.起止页码
     % \bibitem[7] 科技报告：\[序号\]著者.题名\[R\]. 报告题名. 编号.出版地.出版者. 出版年.起止页码
     % \bibitem[8] 学位论文：\[序号\] 著者.题名\[D\].保存地点.授予年
     % \bibitem[9] 专利文献：\[序号\] 专利申请者.题名\[P\]. 国别.专利文献种类.专利号.出版日期
 \end{thebibliography}
-
 %附录
 \newpage
 \begin{appendices}
 
-    \section{环境依赖与使用说明}
-    \begin{table}[htbp]
-        \centering
-        \caption{依赖罗列}
-        \begin{tabular}{ccccc}
-            \toprule
-            \multicolumn{5}{c}{模板中已经加载的宏包}                      \\
-            \midrule
-            amsbsy & amsfonts & {amsgen} & {amsmath} & {amsopn} \\
-            \bottomrule
-        \end{tabular}%
-        \label{tab:addlabel}%
-    \end{table}%
+    \section{运行环境与环境依赖}
+    代码在Python3.9.12，MacBook Air Apple M1 MacOS13.0.1 (22A400)测试无误。下载解压初赛数据集，将app\_class.csv、dayxx.txt放至Datasets文件夹中，在Visual Studio Code 或 Terminal 中运行 `preprocessing.py`的`generate\_pickle\_origin`，获得pickle格式的粗处理数据，对应2.1、2.2、2.3、2.4小节。
 
-    以上宏包都已经加载过了，不要重复加载它们。
+    除数据清洗、预处理源代码直接来自Python脚本，其余附录所列出的代码均由Jupyter Notebook记事本文件导出。
+    \begin{lstlisting}[language=Python]
+matplotlib~=3.7.2
+numpy~=1.23.5
+pandas~=2.0.3
+scienceplots~=2.1.0
+scikit_learn~=1.3.0
+seaborn~=0.12.2
+tqdm~=4.64.0
+xgboost~=1.7.6
+ydata_profiling~=4.3.1
+    \end{lstlisting}
 
-    \section{2.1 源代码}
+    \section{数据清洗、预处理源代码}
+    \begin{lstlisting}[language=Python]
+from tqdm.auto import tqdm
+import pandas as pd
+import os
 
-    \section{2.2 源代码}
 
-    \section{2.3 源代码}
+def generate_pickle_origin(start_day=1, end_day=21):
+    # 读取类型数据
+    app = pd.read_csv(
+        filepath_or_buffer='../Datasets/app_class.csv',
+        header=None
+    ).drop_duplicates()
 
-    \begin{lstlisting}[language=matlab]
-kk=2;[mdd,ndd]=size(dd);
-while ~isempty(V)
-[tmpd,j]=min(W(i,V));tmpj=V(j);
-for k=2:ndd
-[tmp1,jj]=min(dd(1,k)+W(dd(2,k),V));
-tmp2=V(jj);tt(k-1,:)=[tmp1,tmp2,jj];
-end
-tmp=[tmpd,tmpj,j;tt];[tmp3,tmp4]=min(tmp(:,1));
-if tmp3==tmpd, ss(1:2,kk)=[i;tmp(tmp4,2)];
-else,tmp5=find(ss(:,tmp4)~=0);tmp6=length(tmp5);
-if dd(2,tmp4)==ss(tmp6,tmp4)
-ss(1:tmp6+1,kk)=[ss(tmp5,tmp4);tmp(tmp4,2)];
-else, ss(1:3,kk)=[i;dd(2,tmp4);tmp(tmp4,2)];
-end;end
-dd=[dd,[tmp3;tmp(tmp4,2)]];V(tmp(tmp4,3))=[];
-[mdd,ndd]=size(dd);kk=kk+1;
-end; S=ss; D=dd(1,:);
+    # 更新列标签
+    app.columns = ['appid', 'app_class']
+
+    # 新增一笔虚拟资料（NaN）
+    app = pd.concat(
+        objs=[pd.DataFrame({"appid": [-404], "app_class": ['NaN']}), app],
+        ignore_index=True
+    )
+
+    # 约束数据格式
+    app['app_class'] = app['app_class'].astype('category')
+    app['appid'] = app['appid'].astype('category')
+
+    # 初赛数据集day1～21
+    for i in tqdm(range(start_day, end_day + 1)):
+        # 读取监测数据
+        df = pd.read_csv(
+            filepath_or_buffer=f'../Datasets/day{str(i).zfill(2)}.txt',
+            header=None
+        ).drop_duplicates()
+
+        # 更新列标签
+        df.columns = ['uid', 'appid', 'app_type', 'start_day', 'start_time',
+                        'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']
+
+        # 新增app_class，对于所属类别未知的APP，类别记作NaN
+        df = df.merge(app, on='appid', how='left')
+        df['app_class'] = df['app_class'].fillna('NaN')
+
+        # 约束数据格式
+        df['appid'] = df['appid'].astype('category')
+        df['uid'] = df['uid'].astype('category')
+        df['app_type'] = df['app_type'].astype('category')
+
+        # df['start_time'] = pd.to_datetime(df['start_time'], format="%H:%M:%S")
+        # df['end_time'] = pd.to_datetime(df['end_time'], format="%H:%M:%S")
+        # 使用 pandas.Timestamp 将 `day` 和 `time` 合并
+        # df['start_time_new'] = df.apply(
+        #     lambda x: x['start_time'] + pd.Timedelta(x['start_day'] - 1, unit='D'), axis=1)
+        # df['end_time_new'] = df.apply(
+        #     lambda x: x['end_time'] + pd.Timedelta(x['end_day'] - 1, unit='D'), axis=1)
+
+        df = df[['uid', 'appid', 'app_type', 'app_class', 'start_day', 'start_time',
+                    'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']]
+
+        # 使用 pickle 存储
+        df.to_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+
+
+def generate_pickle_1(start_day=1, end_day=21):
+    """
+    数据融合：day01~day21
+    建立特征：连接辅助表，新增app_class
+    清洗数据：异常值、缺失值、重复值
+    """
+
+    # 读取类型数据
+    app = pd.read_csv(
+        filepath_or_buffer='../Datasets/app_class.csv',
+        header=None
+    ).drop_duplicates()
+
+    # 更新列标签
+    app.columns = ['appid', 'app_class']
+
+    # 新增一笔虚拟资料（NaN）
+    app = pd.concat(
+        objs=[pd.DataFrame({"appid": [-404], "app_class": ['NaN']}), app],
+        ignore_index=True
+    )
+
+    # 约束数据格式
+    app['app_class'] = app['app_class'].astype('category')
+    app['appid'] = app['appid'].astype('category')
+
+    # 初赛数据集day1～21
+    for i in tqdm(range(start_day, end_day + 1)):
+        # 读取监测数据
+        df = pd.read_csv(
+            filepath_or_buffer=f'../Datasets/day{str(i).zfill(2)}.txt',
+            header=None
+        ).drop_duplicates()
+
+        # 更新列标签
+        df.columns = ['uid', 'appid', 'app_type', 'start_day', 'start_time',
+                        'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']
+
+        # 问题：start_day为负数，甚至持续时间长达一千年
+        df = df.query('start_day >=0 & duration <= 9159')
+
+        # 新增app_class，对于所属类别未知的APP，类别记作NaN
+        df = df.merge(app, on='appid', how='left')
+        df['app_class'] = df['app_class'].fillna('NaN')
+        # 问题：app_type 列存在中文
+        df['app_class'] = df['app_class'].replace({'用户': 'usr', '预装': 'sys'})
+
+        # 约束数据格式
+        df['appid'] = df['appid'].astype('category')
+        df['uid'] = df['uid'].astype('category')
+        df['app_type'] = df['app_type'].astype('category')
+
+        # df['start_time'] = pd.to_datetime(df['start_time'], format="%H:%M:%S")
+        # df['end_time'] = pd.to_datetime(df['end_time'], format="%H:%M:%S")
+        # 使用 pandas.Timestamp 将 `day` 和 `time` 合并
+        # df['start_time_new'] = df.apply(
+        #     lambda x: x['start_time'] + pd.Timedelta(x['start_day'] - 1, unit='D'), axis=1)
+        # df['end_time_new'] = df.apply(
+        #     lambda x: x['end_time'] + pd.Timedelta(x['end_day'] - 1, unit='D'), axis=1)
+
+        df = df[['uid', 'appid', 'app_type', 'app_class', 'start_day', 'start_time',
+                    'end_day', 'end_time', 'duration', 'up_flow', 'down_flow']]
+
+        # 使用 pickle 存储
+        df.to_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+
+    \end{lstlisting}
+
+    \section{数据探索：数据概览源代码}
+
+    \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+      
+# # 载入套件
+
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+days = {i: pd.read_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+        for i in range(1, 22)}
+
+
+# # 工具函数
+
+
+SEED = 20230723
+
+
+def same_seed(seed=SEED):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+same_seed()
+
+
+# # 辅助表格
+
+# 辅助表格，常用APP类别
+# 发现：原始表格存在重复值
+app = pd.read_csv('../Datasets/app_class.csv', header=None).drop_duplicates()
+app.columns = ['appid', 'app_class']
+
+# 副本：不锁定数据格式
+app_copy = app.copy()
+
+# 约束数据格式
+app['appid'] = app['appid'].astype('category')
+app['app_class'] = app['app_class'].astype('category')
+
+# 打印行列数、概况
+print('app:', app.shape)
+pd.DataFrame(app.value_counts('app_class'))
+app.describe()
+
+
+
+# 21天内监测数据中共有36435种app_id
+appid = set({})
+for i in range(1, 22):
+    appid = appid.union(days[i]['appid'].unique())
+len(appid)
+
+
+
+# NaN
+val = pd.DataFrame({'appid': list(appid)})
+val = val.merge(app_copy, on='appid', how='left')
+val[val['app_class'].isna()].shape
+
+
+
+# a～t
+val['app_class'].dropna().shape
+
+
+
+sns.catplot(kind='count', data=val.sort_values(by='app_class'),
+            x='app_class', height=3.5, aspect=10/3.5)
+
+plt.savefig("../Thesis/figures/app_class_countplot_in_days.pdf",
+            dpi=400, bbox_inches='tight', pad_inches=0)
+
+
+
+pd.DataFrame(val.fillna('NaN').value_counts(
+    ['app_class'])).sort_values(by='count')
  \end{lstlisting}
 
-    \section{规划解决程序--lingo源代码}
+    \section{数据探索：类别变量代码}
 
-    \begin{lstlisting}[language=c]
-kk=2;
-[mdd,ndd]=size(dd);
-while ~isempty(V)
-    [tmpd,j]=min(W(i,V));tmpj=V(j);
-for k=2:ndd
-    [tmp1,jj]=min(dd(1,k)+W(dd(2,k),V));
-    tmp2=V(jj);tt(k-1,:)=[tmp1,tmp2,jj];
-end
-    tmp=[tmpd,tmpj,j;tt];[tmp3,tmp4]=min(tmp(:,1));
-if tmp3==tmpd, ss(1:2,kk)=[i;tmp(tmp4,2)];
-else,tmp5=find(ss(:,tmp4)~=0);tmp6=length(tmp5);
-if dd(2,tmp4)==ss(tmp6,tmp4)
-    ss(1:tmp6+1,kk)=[ss(tmp5,tmp4);tmp(tmp4,2)];
-else, ss(1:3,kk)=[i;dd(2,tmp4);tmp(tmp4,2)];
-end;
-end
-    dd=[dd,[tmp3;tmp(tmp4,2)]];V(tmp(tmp4,3))=[];
-    [mdd,ndd]=size(dd);
-    kk=kk+1;
-end;
-S=ss;
-D=dd(1,:);
- \end{lstlisting}
+    \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[1]:
+
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+days = {i: pd.read_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+        for i in range(1, 22)}
+
+
+# # 监测表格
+# 
+# | 变量名        | 释义                          |
+# |------------|-----------------------------|
+# | uid        | 用户的id                       |
+# | appid      | APP的id（与app_class文件中的第一列对应） |
+# | app_type   | APP类型：系统自带、用户安装             |
+# | start_day  | 使用起始天，取值1-30                |
+# | start_time | 使用起始时间                      |
+# | end_day    | 使用结束天                       |
+# | end_time   | 使用结束时间                      |
+# | duration   | 使用时长（秒）                     |
+# | up_flow    | 上行流量                        |
+# | down_flow  | 下行流量                        |
+
+# # 单一变量
+
+# In[2]:
+
+
+# 发现：数据集存在中文['用户', '预装']
+temp = days[2].select_dtypes('category').describe()
+temp
+
+
+# In[3]:
+
+
+app_type = set({})
+for i in range(1, 22):
+    app_type = app_type.union(days[i]['app_type'].unique())
+app_type
+
+
+# In[4]:
+
+
+for i in range(1, 22):
+    days[i].replace({'用户': 'usr', '预装': 'sys'}, inplace=True)
+
+
+# # 天数变化
+
+# In[5]:
+
+
+data = {'day': [], 'cat': [], 'val': []}
+for i in range(1, 22):
+    temp = days[i].select_dtypes('category').describe()
+    # 日活跃用户
+    data['day'].append(i)
+    data['cat'].append('users')
+    data['val'].append(temp.loc['unique', 'uid'])
+
+    # 日志
+    data['day'].append(i)
+    data['cat'].append('logs')
+    data['val'].append(temp.loc['count', 'uid'])
+
+    # APP
+    data['day'].append(i)
+    data['cat'].append('apps')
+    data['val'].append(temp.loc['unique', 'appid'])
+temp = pd.DataFrame(data)
+
+
+# In[6]:
+
+
+for cat in ['logs', 'users', 'apps']:
+    g = sns.relplot(kind='line',
+                    data=temp[temp['cat'] == cat],
+                    x='day',
+                    y='val',
+                    marker='o')
+    g.set(
+        ylabel=f'val_{cat}',
+        xticks=range(1, 22)
+    )
+    plt.savefig(f'../Thesis/figures/relplot_line_day_val_{cat}.pdf',
+                dpi=400,
+                bbox_inches='tight',
+                pad_inches=0)
+
+
+# # 变量关联
+
+# In[7]:
+
+
+# dfs = []
+# for i in range(1, 22):
+#     dfs.append(days[i][['appid', 'app_type', 'app_class']].drop_duplicates())
+# ((pd.concat(dfs, ignore_index=True)).drop_duplicates()
+#  ).to_pickle('../Datasets/app.pkl')
+
+
+# In[8]:
+
+
+app = pd.read_pickle('../Datasets/app.pkl')
+app['appid'] = app['appid'].astype('category')
+app.select_dtypes('category').describe()
+
+
+# In[9]:
+
+
+app.groupby('appid').count().query('app_class == 2')
+
+
+# In[10]:
+
+
+days[1][(days[1]['appid'] == 4) & (days[1]['app_type'] == 'usr')
+        & (days[1]['uid'] == '91C16B1FE338DA085CB0B0840D8C6BA5')]
+
+
+# In[11]:
+
+
+g = sns.catplot(kind='count', data=app.query("app_class != 'NaN'"), x='app_class',
+                hue='app_type', hue_order=['usr', 'sys'],
+                height=5, aspect=10/5)
+plt.yscale('log')
+plt.savefig("../Thesis/figures/catplot_count_app_class.pdf",
+            dpi=400, bbox_inches='tight', pad_inches=0.005)
+
+
+    \end{lstlisting}
+
+    \section{数据探索：数值变量代码}
+    \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[1]:
+
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+days = {i: pd.read_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+        for i in range(1, 22)}
+
+# 继承自2.2数据探索之类别变量
+for i in range(1, 22):
+    days[i]['app_type'] = days[i]['app_type'].replace(
+        {'用户': 'usr', '预装': 'sys'})
+
+
+# # 单一变量
+
+# In[2]:
+
+
+days[1].select_dtypes('number').describe()
+
+
+# In[3]:
+
+
+fig, axes = plt.subplots(1, 3, figsize=(13.5, 5))
+
+for i, x in enumerate(['duration', 'up_flow', 'down_flow']):
+    g = sns.boxenplot(data=days[1], y=x, orient='v', ax=axes[i])
+    g.set(
+        yscale='log'
+    )
+
+plt.savefig("../Thesis/figures/boxenplot_duration_day01.pdf",
+            dpi=400, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[4]:
+
+
+boss = 0
+for i in range(1, 22):
+    boss = max(boss, days[i]['duration'].quantile(0.9998))
+boss
+
+
+# In[5]:
+
+
+# days[1].query("uid == '64B3E40461C56847F35DB46D55707EA4'").sort_values(
+#     by='end_time')
+
+
+# In[6]:
+
+
+# days[1].query("uid == '1F1EF788E30A9EA8E8CB52059A4B02A0'").sort_values(
+#     by='end_time')
+
+
+# In[7]:
+
+
+days[19].query("app_class == 'a' & duration > 20000")
+
+
+# In[8]:
+
+
+# 发现：有‘僵尸用户’（请求/活跃程度极低，监控记录中app_class均为NaN）
+days[1][days[1]['uid'] == '3B0AAFBD3213D6DB0CCB17EDEAE80C38']
+
+
+# In[9]:
+
+
+# 数据清洗
+for i in range(1, 22):
+    days[i] = days[i].query('duration <= 9159')
+
+
+# In[10]:
+
+
+days[1].select_dtypes('number').describe()
+
+
+# In[52]:
+
+
+fig, axes = plt.subplots(1, 5, figsize=(28, 4))
+ax = axes[0]
+g = sns.histplot(
+    data=days[1].pivot_table(
+        index='uid',
+        values='appid',
+        aggfunc='count',
+    ),
+    ax=ax,
+    x='appid'
+)
+
+
+ax = axes[1]
+g = sns.histplot(
+    data=days[1].pivot_table(
+        index='uid',
+        values='duration',
+        aggfunc=np.sum
+    ),
+    ax=ax,
+    x='duration'
+)
+
+
+ax = axes[2]
+g = sns.histplot(
+    data=days[1].pivot_table(
+        index='uid',
+        values='up_flow',
+        aggfunc=np.sum
+    ),
+    ax=ax,
+    x='up_flow',
+)
+g.set(
+    xscale='log'
+)
+
+ax = axes[3]
+g = sns.histplot(
+    data=days[1].pivot_table(
+        index='uid',
+        values='down_flow',
+        aggfunc=np.sum
+    ),
+    ax=ax,
+    x='down_flow',
+)
+g.set(
+    xscale='log'
+)
+
+ax = axes[4]
+g = sns.histplot(
+    data=pd.DataFrame(pd.DataFrame(
+        days[1].groupby('uid').size()).to_records()),
+    ax=ax,
+    x='0',
+)
+
+plt.savefig("../Thesis/figures/histplots_appid_duration_upflow_downflow_lines.pdf",
+            dpi=400, bbox_inches='tight', pad_inches=0.005)    
+    \end{lstlisting}
+
+    \section{问题一：量化指标代码}
+    \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[ ]:
+
+
+from typing import Dict
+import numpy as np
+import pandas as pd
+
+import ydata_profiling
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+plt.style.use(['fivethirtyeight', 'science', 'grid'])
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+
+# In[ ]:
+
+
+days = {i: pd.read_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+        for i in range(1, 22)}
+
+
+# # 使用时长
+
+# In[ ]:
+
+
+dfs = []
+value = 'duration'
+for i in range(1, 8):
+    pt = days[i].pivot_table(
+        index='uid',
+        columns='app_class',
+        values=value,
+        aggfunc=np.sum,
+        fill_value=0
+    )
+
+    feature = pd.DataFrame(pt.to_records())
+    feature.columns = [
+        f'{value}_{i}' if i != 'uid' else i for i in feature.columns]
+    feature.drop(columns=f'{value}_NaN', inplace=True)
+    feature['day'] = i
+    dfs.append(feature)
+
+feature_duration = pd.concat(dfs, ignore_index=True).groupby([
+    'uid']).sum().drop(columns='day')
+feature_duration
+
+
+# # 上行流量
+
+# In[ ]:
+
+
+dfs = []
+value = 'up_flow'
+for i in range(1, 8):
+    pt = days[i].pivot_table(
+        index='uid',
+        columns='app_class',
+        values=value,
+        aggfunc=np.sum,
+        fill_value=0
+    )
+
+    feature = pd.DataFrame(pt.to_records())
+    feature.columns = [
+        f'{value}_{i}' if i != 'uid' else i for i in feature.columns]
+    feature.drop(columns=f'{value}_NaN', inplace=True)
+    feature['day'] = i
+    dfs.append(feature)
+
+feature_upflow = pd.concat(dfs, ignore_index=True).groupby([
+    'uid']).sum().drop(columns='day')
+feature_upflow
+
+
+# # 下行流量
+
+# In[ ]:
+
+
+dfs = []
+value = 'down_flow'
+for i in range(1, 8):
+    pt = days[i].pivot_table(
+        index='uid',
+        columns='app_class',
+        values=value,
+        aggfunc=np.sum,
+        fill_value=0
+    )
+
+    feature = pd.DataFrame(pt.to_records())
+    feature.columns = [
+        f'{value}_{i}' if i != 'uid' else i for i in feature.columns]
+    feature.drop(columns=f'{value}_NaN', inplace=True)
+    feature['day'] = i
+    dfs.append(feature)
+
+feature_downflow = pd.concat(dfs, ignore_index=True).groupby([
+    'uid']).sum().drop(columns='day')
+feature_downflow
+
+
+# # 使用频次
+
+# dfs = []
+# value = 'count'
+# for i in range(1, 8):
+#     pt = days[i].pivot_table(
+#         index='uid',
+#         columns='app_class',
+#         values='duration',
+#         aggfunc='count',
+#         fill_value=0
+#     )
+# 
+#     feature = pd.DataFrame(pt.to_records())
+#     feature.columns = [
+#         f'{value}_{i}' if i != 'uid' else i for i in feature.columns]
+#     feature.drop(columns=f'{value}_NaN', inplace=True)
+#     feature['day'] = i
+#     dfs.append(feature)
+# 
+# feature_count = pd.concat(dfs, ignore_index=True).groupby([
+#     'uid']).sum().drop(columns='day')
+# feature_count
+# 
+
+# # 特征融合
+# 
+# 前7日各类 APP 使用时长、使用频次、上行流量、下行流量
+
+# In[ ]:
+
+
+features = pd.DataFrame(pd.concat([feature_duration, feature_upflow,
+                                    feature_downflow, feature_count], axis=1).to_records())
+features.to_pickle('../Datasets/features_q1.pkl')
+
+        
+    \end{lstlisting}
+
+    \section{问题一：聚类算法代码}
+
+    \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[1]:
+
+
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn import metrics
+from sklearn.cluster import DBSCAN
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+import matplotlib.cm as cm
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+SEED = 20230723
+
+
+def same_seed(seed=SEED):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+same_seed()
+
+
+# ## 数据预处理
+
+# In[2]:
+
+
+features = pd.read_pickle('../Datasets/features_q1.pkl')
+for aspect in ['duration', 'up_flow', 'down_flow', 'count']:
+    cols = [i for i in features.columns if i.startswith(aspect)]
+    features[cols] = (features[cols] - features[cols].values.mean()) /         features[cols].values.std()
+
+
+# ### 皮尔逊相关系数
+
+# In[3]:
+
+
+# corr = features.drop(columns='uid').corr()
+# mask = np.triu(np.ones_like(corr, dtype=bool))
+# f, ax = plt.subplots(figsize=(11, 9))
+# sns.heatmap(corr, mask=mask, cmap=sns.color_palette("coolwarm"), vmax=.3, center=0,
+#             square=True, linewidths=.5, cbar_kws={"shrink": .5})
+
+# plt.savefig("../Thesis/figures/heatmap_features.pdf",
+#             dpi=400, bbox_inches='tight', pad_inches=0.005)
+
+
+# ### 主成分分析
+
+# In[4]:
+
+
+# pca = PCA()
+# pca.fit(features.drop(columns='uid'))
+# fs = np.arange(pca.n_components_)[:40]
+
+# plt.figure(figsize=(10, 3))
+# g = sns.barplot(x=fs, y=pca.explained_variance_[:40])
+
+# plt.savefig("../Thesis/figures/barplot_pca_features.pdf",
+#             dpi=400, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[5]:
+
+
+pca = PCA(n_components=3)
+pca.fit(features.drop(columns='uid'))
+transformed = pca.transform(features.drop(columns='uid'))
+X = transformed
+
+
+# # 聚类分析
+
+# ## 原型聚类：K-Means++
+
+# In[6]:
+
+
+# Ks = range(2, 52)
+# inertias = []
+# scores = []
+
+# for k in Ks:
+#     model = KMeans(n_clusters=k, random_state=0, n_init="auto", max_iter=1000)
+#     model.fit(X)
+#     inertias.append(model.inertia_)
+#     scores.append(metrics.calinski_harabasz_score(X, model.labels_))
+
+# fig, axes = plt.subplots(1, 2, figsize=(12, 5.5))
+
+# g = sns.lineplot(x=Ks, y=inertias, marker='o', ax=axes[0])
+# g.set(
+#     xlabel='number of clusters',
+#     ylabel='inertia'
+# )
+
+# g = sns.lineplot(x=Ks, y=scores,
+#                  marker='o', ax=axes[1])
+# g.set(
+#     xlabel='number of clusters',
+#     ylabel='calinski harabasz score'
+# )
+
+# plt.savefig("../Thesis/figures/lineplot_Ks_inertias_CH.pdf",
+#             dpi=400, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[7]:
+
+
+labels_kmeans = KMeans(n_clusters=5, random_state=0,
+                        n_init="auto", max_iter=1000).fit_predict(transformed)
+labels_kmeans
+
+
+# In[8]:
+
+
+labels_kmeans.shape
+
+
+# ## 密度聚类：DBSCAN
+
+# In[15]:
+
+
+# from sklearn.neighbors import NearestNeighbors
+
+# # ref: https://stackoverflow.com/questions/15050389/estimating-choosing-optimal-hyperparameters-for-dbscan
+# k = 2 * X.shape[-1] - 1
+# nbrs = NearestNeighbors(n_neighbors=k, radius=1.0).fit(X)
+# distances, indices = nbrs.kneighbors(X)
+# distances = np.sort(distances, axis=0)
+# distances = distances[:, k-1]
+
+# g = sns.relplot(
+#     distances,
+#     kind='line'
+# )
+
+# plt.axhline(y=2, linestyle=':')
+
+# g.set(
+#     xlabel='Index of Users in the dataset',
+#     ylabel='Sorted {}-nearest Neighbor Distance'.format(k)
+# )
+
+# plt.savefig("../Thesis/figures/relplot_knn_distances.pdf",
+#             dpi=400, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[16]:
+
+
+db = DBSCAN(eps=2, min_samples=6).fit(X)
+labels_dbscan = db.labels_
+
+# Number of clusters in labels, ignoring noise if present.
+n_clusters_ = len(set(labels_dbscan)) - (1 if -1 in labels_dbscan else 0)
+n_noise_ = list(labels_dbscan).count(-1)
+
+print(f"Estimated number of clusters: {n_clusters_}")
+print(f"Estimated number of noise points: {n_noise_}")
+
+
+# In[17]:
+
+
+set(labels_dbscan)
+
+
+# In[18]:
+
+
+counter = {}
+for i in labels_dbscan:
+    counter[i] = counter.get(i, 0)+1
+counter
+
+
+# ##  层次聚类：BRICH
+
+# In[11]:
+
+
+from sklearn.cluster import Birch
+import numpy as np
+from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram
+from sklearn.cluster import AgglomerativeClustering
+
+brc = Birch(n_clusters=None)
+brc.fit(transformed)
+labels_brc = brc.labels_
+centroids = brc.subcluster_centers_
+
+model = AgglomerativeClustering(n_clusters=6)
+model = model.fit(centroids)
+
+
+# In[12]:
+
+
+# def plot_dendrogram(model, **kwargs):
+#     # Create linkage matrix and then plot the dendrogram
+
+#     # create the counts of samples under each node
+#     counts = np.zeros(model.children_.shape[0])
+#     n_samples = len(model.labels_)
+#     for i, merge in enumerate(model.children_):
+#         current_count = 0
+#         for child_idx in merge:
+#             if child_idx < n_samples:
+#                 current_count += 1  # leaf node
+#             else:
+#                 current_count += counts[child_idx - n_samples]
+#         counts[i] = current_count
+
+#     linkage_matrix = np.column_stack(
+#         [model.children_, model.distances_, counts]
+#     ).astype(float)
+
+#     # Plot the corresponding dendrogram
+#     dendrogram(linkage_matrix, **kwargs)
+
+
+# plt.figure(figsize=(15, 15))
+# plt.title("Hierarchical Clustering Dendrogram")
+# # plot the top p levels of the dendrogram
+# plot_dendrogram(model, truncate_mode="level", p=6)
+# plt.xlabel("Number of points in node")
+# plt.xticks(rotation=90)
+# plt.savefig("../Thesis/figures/dendrogram.pdf",
+#             dpi=400, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[13]:
+
+
+labels_brc_agn = []
+for i in labels_brc:
+    labels_brc_agn.append(model.labels_[i])
+
+
+# In[14]:
+
+
+set(labels_brc_agn)
+
+
+# # 算法比较
+
+# ## 内部评价指标
+
+# In[17]:
+
+
+data = {
+    'Method': ['K-Means++', 'DBSCAN', 'BIRCH+AGNES'],
+    'Calinski-Harabasz': [],
+    'Davies-Bouldin': [],
+    'Silhouette': []
+}
+
+for labels in [labels_kmeans, labels_dbscan, labels_brc_agn]:
+    data['Calinski-Harabasz'].append(
+        metrics.calinski_harabasz_score(transformed, labels))
+    data['Davies-Bouldin'].append(
+        metrics.davies_bouldin_score(transformed, labels)
+    )
+    data['Silhouette'].append(
+        metrics.silhouette_score(transformed, labels)
+    )
+
+df = pd.DataFrame(data)
+
+
+# In[ ]:
+
+
+print(df.to_latex())
+
+
+# ## 3D
+
+# In[ ]:
+
+
+fig = plt.figure(figsize=(10, 10))
+ax = fig.add_subplot(projection='3d')
+
+ys = transformed[:, 0]
+xs = transformed[:, 1]
+zs = transformed[:, 2]
+ax.scatter(xs, ys, zs,
+            color=[f'C{i+1}' for i in labels_brc_agn])
+
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('Z')
+
+plt.savefig("../Thesis/figures/3d_brc_agn.png",
+            dpi=500, bbox_inches='tight', pad_inches=0.005)
+
+
+# ## t-SNE
+
+# In[20]:
+
+
+# from sklearn.manifold import TSNE
+
+# # 大概需要运行5分钟
+# X_embedded = TSNE(n_components=2, learning_rate='auto',
+#                   random_state=0).fit_transform(transformed)
+# np.save('t_SNE_X.npy', X_embedded)
+
+X_embedded = np.load('../Datasets/t_SNE_X.npy')
+x, y = X_embedded[:, 0], X_embedded[:, 1]
+
+
+# In[22]:
+
+
+label = labels_dbscan
+plt.figure(figsize=(6, 6))
+sns.scatterplot(
+    x=x,
+    y=y,
+    hue=label,
+    size=0.2,
+    style=label,
+    alpha=0.75,
+)
+plt.legend([], [], frameon=False)
+plt.savefig("../Thesis/figures/2d_dbscan.png",
+            dpi=200, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[ ]:
+
+
+
+
+        
+    \end{lstlisting}
+
+    \section{问题一：用户画像代码}
+
+    \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[1]:
+
+
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn import metrics
+from sklearn.cluster import DBSCAN
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+import matplotlib.cm as cm
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+SEED = 20230723
+
+
+def same_seed(seed=SEED):
+    random.seed(seed)
+    os.environ['PYTHONHASHSEED'] = str(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+
+
+same_seed()
+
+features = pd.read_pickle('../Datasets/features_q1.pkl')
+for aspect in ['duration', 'up_flow', 'down_flow', 'count']:
+    cols = [i for i in features.columns if i.startswith(aspect)]
+    features[cols] = (features[cols] - features[cols].values.mean()) /         features[cols].values.std()
+
+pca = PCA(n_components=3)
+pca.fit(features.drop(columns='uid'))
+transformed = pca.transform(features.drop(columns='uid'))
+X = transformed
+
+model = KMeans(n_clusters=5, random_state=0,
+               n_init="auto", max_iter=1000)
+labels_kmeans = model.fit_predict(transformed)
+labels_kmeans
+
+
+# In[2]:
+
+
+features = pd.read_pickle('../Datasets/features_q1.pkl')
+features['cluster'] = labels_kmeans
+features['cluster'] = features['cluster'].apply(lambda x: str(x))
+features
+
+
+# # 可视化
+
+# In[3]:
+
+
+fig, axes = plt.subplots(4, 5, figsize=(35, 25))
+aspect = 'duration'
+
+for ax, y in zip(axes.flatten(), [i for i in features.columns if i.startswith(aspect)]):
+    sns.stripplot(
+        ax=ax,
+        data=features,
+        x='cluster',
+        y=y,
+        hue="cluster",
+        size=1.2,
+        alpha=0.95
+    )
+
+    ax.legend([], [], frameon=False)
+
+plt.savefig("../Thesis/figures/stripplot_duration_cluster.png",
+            dpi=200, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[4]:
+
+
+fig, axes = plt.subplots(4, 5, figsize=(35, 25))
+aspect = 'count'
+
+for ax, y in zip(axes.flatten(), [i for i in features.columns if i.startswith(aspect)]):
+    sns.stripplot(
+        ax=ax,
+        data=features,
+        x='cluster',
+        y=y,
+        hue="cluster",
+        size=1.2,
+        alpha=0.95
+    )
+
+    ax.legend([], [], frameon=False)
+
+plt.savefig("../Thesis/figures/stripplot_count_cluster.png",
+            dpi=200, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[5]:
+
+
+fig, axes = plt.subplots(4, 5, figsize=(35, 25))
+aspect = 'up_flow'
+
+for ax, y in zip(axes.flatten(), [i for i in features.columns if i.startswith(aspect)]):
+    sns.stripplot(
+        ax=ax,
+        data=features,
+        x='cluster',
+        y=y,
+        hue="cluster",
+        size=1.2,
+        alpha=0.95
+    )
+
+    ax.legend([], [], frameon=False)
+
+plt.savefig("../Thesis/figures/stripplot_up_flow_cluster.png",
+            dpi=200, bbox_inches='tight', pad_inches=0.005)
+
+
+# In[6]:
+
+
+fig, axes = plt.subplots(4, 5, figsize=(35, 25))
+aspect = 'down_flow'
+
+for ax, y in zip(axes.flatten(), [i for i in features.columns if i.startswith(aspect)]):
+    sns.stripplot(
+        ax=ax,
+        data=features,
+        x='cluster',
+        y=y,
+        hue="cluster",
+        size=1.2,
+        alpha=0.95
+    )
+
+    ax.legend([], [], frameon=False)
+
+plt.savefig("../Thesis/figures/stripplot_down_flow_cluster.png",
+            dpi=200, bbox_inches='tight', pad_inches=0.005)
+
+
+# # 数值
+
+# In[7]:
+
+
+features[['cluster']].value_counts()
+
+
+# In[8]:
+
+
+features.shape
+
+
+# In[9]:
+
+
+for aspect in ['duration', 'count', 'up_flow', 'down_flow']:
+    features[f'{aspect}_sum'] = 0
+    for i in [i for i in features.columns if i.startswith(aspect)]:
+        features[f'{aspect}_sum'] += features[i]
+
+
+# In[10]:
+
+
+pt = features.drop(columns='uid').pivot_table(
+    index='cluster',
+    aggfunc=np.mean
+)
+
+c = 'a'
+pt[[f'count_{c}', f'duration_{c}', f'up_flow_{c}', f'down_flow_{c}']]
+
+
+# In[11]:
+
+
+x = range(20)
+plt.figure(figsize=(10, 5))
+for i in range(5):
+    y = pt[[i for i in features.columns if i.startswith(
+        'duration') and 'sum' not in str(i)]].iloc[i]
+    plt.plot(x, y, c=f'C{i}', label=i, alpha=0.75)
+plt.xticks(range(20), list("abcdefghijklmnopqrst"))
+plt.legend()
+plt.savefig("../Thesis/figures/plot_profile.pdf",
+            dpi=200, bbox_inches='tight', pad_inches=0.005)
+    \end{lstlisting}
+
 \end{appendices}
 
 \end{document}
