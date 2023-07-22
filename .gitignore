@@ -1,4 +1,3 @@
-tmp-pdfcrop-13964.tex
 *.ini
 *.aux
 *.lof
@@ -194,7 +193,7 @@ fabric.properties
 **/.ignore/*
 
 # dr
-Datasets/*
+Datasets/day**
 dr/prerequisite/*
 dr/figures/*
 Reference/*
