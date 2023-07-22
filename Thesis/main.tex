@@ -30,13 +30,9 @@
 
 \begin{abstract}
 
-    经过数据探索，发现原始数据存在一定的错误、冗余及缺失。数据清洗后，尝试从原始数据（数值、类别、时间）中提炼统计特征，以便于问题一和问题二的解决。
+    针对问题一，经过数据探索，发现原始数据存在一定的错误、冗余及缺失。数据清洗后，尝试从原始数据（数值、类别、时间）中提炼统计特征，以便于问题一和问题二的解决。
 
     本节首先选取合适量化指标预处理，然后分别采用原型（K-Means++）、密度（DBSCAN）、层次（AGNES）三种聚类算法对用户进行聚类，遵循“肘部法则”选择合理的聚类数量K值；最后，根据聚类结果对不同类别的用户画像，分析不同群体用户的特征。
-
-    cumcmthesis 是为全国大学生数学建模竞赛编写的\LaTeX{}模板, 旨在让大家专注于 论文的内容写作, 而不用花费过多精力在格式的定制和调整上.
-    本手册是相应的参考, 其 中提供了一些环境和命令可以让模板的使用更为方便. 同时需要注意, 使用者需要有一 定的 \LaTeX{} 的使用经验,
-    至少要会使用常用宏包的一些功能, 比如参考文献，数学公式，图片使用，列表环境等等. 例子文件参看 \texttt{example.tex}.
 
     \keywords{\TeX{}\quad  图片\quad   表格\quad  公式}
 \end{abstract}
@@ -53,7 +49,7 @@
 
 智能手机已成为现代社会人们生活不可或缺的一部分，其普及和发展给人们带来了巨大的生活便利和娱乐享受。近年中国智能手机市场品牌竞争进一步加剧，中国超越美国成为全球第一大智能手机市场。随着智能手机市场快速增长，智能手机用户群体愈发多样，智能手机软件满目琳琅，研究智能手机用户的行为模式和使用偏好对于理解用户需求、预测用户行为和优化产品与服务具有重要意义。通过对智能手机用户监测数据的分析，可以为智能手机制造商、软件开发者、广告商和营销人员等提供有益的信息及有价值的洞察，指导他们制定战略和决策，更好地贴合用户需求并提供更佳的用户体验。
 
-\subsection{问题要求}
+\subsection{问题重述}
 
 \begin{description}
     \item[问题一] 针对问题一，赛题要求(1)根据用户常用所属的20类APP的数据对用户聚类，(2)对不同类别的用户画像，分析不同群体用户的特征。
@@ -325,12 +321,20 @@ APP自身包含$appid$、$app\_class$以及$app\_type$属性，因此可以抽�
 
 \begin{definition}
     \textbf{各簇畸变程度}：该簇重心与其内部成员位置距离的平方和；
-    假设一共将$n$个样本划分到$K$个簇中，用$C_k$表示第$k$簇，该簇重心记为$u_k$，则第$k$簇的畸变程度为：$$\sum_{i\in C_k} |x_i-u_k|^2$$
+    假设一共将$n$个样本划分到$K$个簇中，用$C_k$表示第$k$簇，该簇重心记为$u_k$，则第$k$簇的畸变程度为：
+    \begin{equation}
+        \sum_{i\in C_k} |x_i-u_k|^2
+        \label{eq:001}
+    \end{equation}
     \label{def:001}
 \end{definition}
 
 \begin{definition}
-    \textbf{聚合系数}：$$J=\sum_{k=1}^{K} \sum_{i \in C_k} |x_i-u_k|^2$$
+    \textbf{聚合系数}：
+    \begin{equation}
+        J=\sum_{k=1}^{K} \sum_{i \in C_k} |x_i-u_k|^2
+        \label{eq:002}
+    \end{equation}
     \label{def:002}
 \end{definition}
 
@@ -623,145 +627,174 @@ $T$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
 \newpage
 \section{问题二：未来使用情况预测}
 
-\subsection{问题分析与流程思路}
+\subsection{评价指标与求解思路}
 
+\subsubsection{评价指标}
+对于二元分类任务（第一小问）而言，实际及预测标签输出均为二值变量（真或假，1或0）时，评价指标一般采用混淆矩阵（\cref{fig:confusion}~）定义：
 
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.3\textwidth]{confusion}
+    \caption{混淆矩阵}
+    \label{fig:confusion}
+\end{figure}
 
-XGBoost、ResNet、
-
-调整参数
-
-ARIMA
-
-固定窗
-
-滑动窗
-
-验证
-
-\newpage
-\section{公式}
-
-数学建模必然涉及不少数学公式的使用。下面简单介绍一个可能用得上的数学环境。
-
-首先是行内公式，例如 $ \theta $ 是角度。行内公式使用 \verb|$  $| 包裹。
-
-行间公式不需要编号的可以使用 \verb|\[  \]| 包裹，例如
-\[
-    E=mc^2
-\]
-其中 $ E $ 是能量，$ m $ 是质量，$ c $ 是光速。
-
-如果希望某个公式带编号，并且在后文中引用可以参考下面的写法：
+准确率（accuracy）表示正确预测的比率，表示预测正确的数据占所有资料的比率：
 \begin{equation}
-    E=mc^2
-    \label{eq:energy}
+    acc = \frac{TP+TN}{TP+TN+FP+FN}
+    \label{eq:acc}
 \end{equation}
-式\cref{eq:energy}是质能方程。
 
-多行公式有时候希望能够在特定的位置对齐，以下是其中一种处理方法。
+此外，精准率（precision）、召回率（recall）、调和平均F1值也经常作为评价指标：
+\begin{equation}
+    prec = \frac{TP}{TP+FP}
+    \label{eq:prec}
+\end{equation}
+
+\begin{equation}
+    recall = \frac{TP}{TP+FN}
+    \label{eq:recall}
+\end{equation}
+
+\begin{equation}
+    F_1 = \frac{2}{\frac{1}{prec}+\frac{1}{recall}}
+    \label{eq:f1}
+\end{equation}
+
+对于回归任务（第二小问）而言，常用评价指标包括均方根误差（RMSE）、均方根对数误差（RMSLE）、平均绝对值误差（MAE）、决定系数（$R^2$）等，本题采用NMSE：
+
+\begin{equation}
+    RMSE = \sqrt[]{
+        \frac{1}{N} \sum_{i=1}^{N} (y_i-\hat{y_i})^2
+    }
+    \label{eq:rmse}
+\end{equation}
+
+\begin{equation}
+    RMSLE = \sqrt[]{
+    \frac{1}{N} \sum_{i=1}^{N} (\log(1+y_i)-\log(1+\hat{y_i}))^2
+    }
+    \label{eq:rmsle}
+\end{equation}
+
+\begin{equation}
+    MAE = \frac{1}{N} \sum_{i=1}^{N} |y_i-\hat{y_i}|
+    \label{eq:mae}
+\end{equation}
+
 \begin{align}
-    P & = UI   \\
-      & = I^2R
+    R^2     & = 1- \frac{
+        \sum_{i=1}^{N} (y_i-\hat{y_i})^2}{
+    \sum_{i=1}^{N} (y_i-\bar{y_i})^2}         \\
+    \bar{y} & =\frac{1}{N} \sum_{i=1}^{N} y_i
+    \label{eq:r2}
 \end{align}
-\verb|&| 是对齐的位置， \verb|&| 可以有多个，但是每行的个数要相同。
 
-矩阵的输入也不难。
-\[
-    \mathbf{X} = \left(
-    \begin{array}{cccc}
-            x_{11} & x_{12} & \ldots & x_{1n} \\
-            x_{21} & x_{22} & \ldots & x_{2n} \\
-            \vdots & \vdots & \ddots & \vdots \\
-            x_{n1} & x_{n2} & \ldots & x_{nn} \\
-        \end{array} \right)
-\]
+\begin{equation}
+    NMSE = \sqrt[]{\frac{
+            \sum_{i=1}^{N} (y_i-\hat{y_i})^2}{
+            \sum_{i=1}^{N} (y_i-\bar{y_i})^2}}
+    \label{eq:nmse}
+\end{equation}
 
-分段函数这些可以用 \verb|case| 环境，但是它要放在数学环境里面。
-\[
-    f(x) =
-    \begin{cases}
-        0 & x \text{为无理数} , \\
-        1 & x \text{为有理数} .
-    \end{cases}
-\]
-在数学环境里面，字体用的是数学字体，一般与正文字体不同。假如要公式里面有个别文字，则需要把这部分放在 \verb|text| 环境里面，即 \verb|\text{文本环境}| 。
+公式中符号意义如下：
 
-公式中个别需要加粗的字母可以用 \verb|$\bm{math symbol}$| 。如 $ \alpha a\bm{\alpha a} $ 。
+\begin{table}[!htbp]
+    \caption{评价指标符号意义}\label{tab:equation} \centering
+    \begin{tabular}{ccccc}
+        \toprule[1.5pt]
+        符号          & 意义                                            \\
+        \midrule[1pt]
+        $N$         & 资料笔数，本题代表1～21天出现的用户总数                         \\
+        $i$         & $1, 2,\ldots, N$，为每笔资料的索引                     \\
+        $y_i$       & 第$i$笔资料的实际值，如第$i$名用户第12至21天使用a类APP的实际有效日均使用时长 \\
+        $\hat{y_i}$ & 第$i$笔资料的预测值，如第$i$名用户第12至21天使用a类APP的预测有效日均使用时长 \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
 
-以上仅简单介绍了基础的使用，对于更复杂的需求，可以阅读相关的宏包手册，如 \href{http://texdoc.net/texmf-dist/doc/latex/amsmath/amsldoc.pdf}{amsmath}。
+\subsubsection{系统Pipeline}
 
-希腊字母这些如果不熟悉，可以去查找符号文件 \href{http://mirrors.ctan.org/info/symbols/comprehensive/symbols-a4.pdf}{symbols-a4.pdf} ，也可以去 \href{http://detexify.kirelabs.org/classify.html}{detexify} 网站手写识别。另外还有数学公式识别软件 \href{https://mathpix.com/}{mathpix} 。
+在使用机器学习建立模型解决第一小问与第二小问前，必须先确定模型输入与输出的固定格式与含义。从系统本身而言，问题二要求输入1～11天用户使用APP监测数据，输出12～21天用户是否使用A类APP以及日均使用时长。这一问题兼具“用户行为属性”与“时间序列属性”，我们可以将这一复杂问题在两个方向进行抽象、简化：
 
-下面简单介绍一下定理、证明等环境的使用。
+\begin{enumerate}
+    \item 输入某用户前一天是否使用A类APP（类别），输出该用户后$1$天是否使用（类别）
+    \item 输入某用户前$n$天是否使用A类APP（向量），输出该用户后$1$天是否使用（类别）
+    \item 输入某用户前$n$天是否使用A类APP（向量），输出该用户后$n$天是否使用（向量）
+    \item 输入某用户前$1$天的使用时长（标量），输出一个用户后$1$天的使用时长（标量）
+    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$1$天的使用时长（标量）
+    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$n$天的使用时长（向量）
+\end{enumerate}
 
-除了 definition 环境，还可以使用 theorem 、lemma、corollary、assumption、conjecture、axiom、principle、problem、example、proof、solution 这些环境，根据论文的实际需求合理使用。
+由于12～21天属于测试集，不可泄漏参与训练，因此天然缺失构建$n=10$的6号、3号求解框架，如果选取$n=3$或许不符合以7天为周期的社会性活动常识。因此，本文折衷资料数目与特征数目，提出了两种求解框架进行模式识别、特征挖掘：
+\begin{enumerate}
+    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$1$天的使用时长（标量），并通过预训练模型执行下游任务：滑动窗口覆盖21天，如\cref{fig:pipeline1}。
+    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$m$天的使用时长（向量），并通过预训练模型执行下游任务：滑动窗口覆盖21天，如\cref{fig:pipeline2}。
+\end{enumerate}
 
-\begin{theorem}
-    这是一个定理。
-    \label{thm:example}
-\end{theorem}
-由\cref{thm:example}我们知道了定理环境的使用。
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.85\textwidth]{pipeline1}
+    \caption{求解框架（一）}
+    \label{fig:pipeline1}
+\end{figure}
 
-\begin{lemma}
-    这是一个引理。
-    \label{lem:example}
-\end{lemma}
-由\cref{lem:example}我们知道了引理环境的使用。
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=.85\textwidth]{pipeline2}
+    \caption{求解框架（二）}
+    \label{fig:pipeline2}
+\end{figure}
 
-\begin{corollary}
-    这是一个推论。
-    \label{cor:example}
-\end{corollary}
-由\cref{cor:example}我们知道了推论环境的使用。
+对于提出的两种求解框架，考虑到实现细节与篇幅页数的限制，下文仅讨论和展示框架（一），根据监测数据每日A类APP有效使用时长作为特征建立训练集、测试集，共计47345笔资料。
 
-\begin{assumption}
-    这是一个假设。
-    \label{asu:example}
-\end{assumption}
-由\cref{asu:example}我们知道了假设环境的使用。
+\subsection{超参数选择与预训练模型建立}
 
-\begin{conjecture}
-    这是一个猜想。
-    \label{con:example}
-\end{conjecture}
-由\cref{con:example}我们知道了猜想环境的使用。
+\subsubsection{建立KNN最近邻分类预测模型}
 
-\begin{axiom}
-    这是一个公理。
-    \label{axi:example}
-\end{axiom}
-由\cref{axi:example}我们知道了公理环境的使用。
+KNN将无类别标签样本归为最接近该点的$K$个样本点中最频繁使用的一类。本文在1～40所有奇数中，对$K$值进行网格搜索，在训练资料上对模型采用8折交叉验证，运行结果显示：$K=33$时，正确率最高可达$87.508\%$。
 
-\begin{principle}
-    这是一个定律。
-    \label{pri:example}
-\end{principle}
-由\cref{pri:example}我们知道了定律环境的使用。
+\subsubsection{建立LogisticRegression分类预测模型}
 
-\begin{problem}
-这是一个问题。
-\label{pro:example}
-\end{problem}
-由\cref{pro:example}我们知道了问题环境的使用。
+LogisticRegression也称“对数概率回归”，属于一种基于概率的判别模型。
+在训练资料上对模型采用8折交叉验证，运行结果显示：模型在预训练资料上正确率平均为$87.31\%$。
 
-\begin{example}
-    这是一个例子。
-    \label{exa:example}
-\end{example}
-由\cref{exa:example}我们知道了例子环境的使用。
+\subsubsection{建立随机森林集成分类预测模型}
 
-\begin{proof}
-    这是一个证明。
-    \label{prf:example}
-\end{proof}
-由\cref{prf:example}我们知道了证明环境的使用。
+随机森林是一个集成装箱多个决策树的分类器，每棵树模型采用Bootstrap方式对特征进行采样。
+本文对\cref{tab:010}~三类超参数进行网格搜索，在训练资料上对模型采用3折交叉验证，运行结果显示，设置下列超参数时，正确率最高可达$88.71\%$。
 
-\begin{solution}
-    这是一个解。
-    \label{sol:example}
-\end{solution}
-由\cref{sol:example}我们知道了解环境的使用。
+\begin{table}[!htbp]
+    \caption{随机森林最佳超参数}\label{tab:010} \centering
+    \begin{tabular}{cccccc}
+        \toprule[1.5pt]
+        超参数             & 取值 & 超参数                  & 取值 & 超参数          & 取值 \\
+        \midrule[1pt]
+        $n\_estimators$ & 60 & $min\_samples\_leaf$ & 7  & $max\_depth$ & 12 \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
+
+\subsubsection{建立XGBoost集成回归预测模型}
+
+XGBoost也是以决策树为基础的模型，采用梯度提升对多棵决策树进行组合，在准确率、运算速度、操作便利性上表现优秀。采用网格搜素超参数，在训练资料上对模型采用10折交叉验证，选择超参数如\cref{tab:011}时，在预训练资料上（给定1～10天，预测第11天）NMSE损失最小可达$0.8262$。
+
+\begin{table}[!htbp]
+    \caption{xgboost最佳超参数}\label{tab:011} \centering
+    \begin{tabular}{cccccc}
+        \toprule[1.5pt]
+        超参数             & 取值 & 超参数          & 取值 & 超参数                  & 取值  \\
+        \midrule[1pt]
+        $n\_estimators$ & 10 & $max\_depth$ & 3  & $min\_child\_weight$ & 1.0 \\
+        \bottomrule[1.5pt]
+    \end{tabular}
+\end{table}
+
+\subsection{运行结果}
+
+\subsubsection{运行结果}
+
+在选择最优的预训练模型上，经测试，在下游任务1“预测第12~21天是否会使用该类APP”上随机森林算法正确率高达；在下游任务2“预测第12~21天用户使用a类APP的有效日均使用时长”中XGboost的NMSE低至。
 
 %参考文献
 \newpage
@@ -2193,6 +2226,30 @@ plt.xticks(range(20), list("abcdefghijklmnopqrst"))
 plt.legend()
 plt.savefig("../Thesis/figures/plot_profile.pdf",
             dpi=200, bbox_inches='tight', pad_inches=0.005)
+    \end{lstlisting}
+
+    \section{问题二：训练资料代码}
+
+    \begin{lstlisting}[language=Python]
+
+    \end{lstlisting}
+
+    \section{问题二：分类问题代码}
+
+    \begin{lstlisting}[language=Python]
+
+    \end{lstlisting}
+
+    \section{问题二：回归问题代码}
+
+    \begin{lstlisting}[language=Python]
+
+    \end{lstlisting}
+
+    \section{问题二： 模型评价代码}
+
+    \begin{lstlisting}[language=Python]
+
     \end{lstlisting}
 
 \end{appendices}
