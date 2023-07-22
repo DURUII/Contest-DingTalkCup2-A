@@ -30,11 +30,14 @@
 
 \begin{abstract}
 
-    针对问题一，经过数据探索，发现原始数据存在一定的错误、冗余及缺失。数据清洗后，尝试从原始数据（数值、类别、时间）中提炼统计特征，以便于问题一和问题二的解决。
+    随着智能手机市场快速增长，智能手机用户群体愈发多样，智能手机软件满目琳琅，研究智能手机用户的行为模式和使用偏好对于理解用户需求、预测用户行为和优化产品与服务具有重要意义。
 
-    本节首先选取合适量化指标预处理，然后分别采用原型（K-Means++）、密度（DBSCAN）、层次（AGNES）三种聚类算法对用户进行聚类，遵循“肘部法则”选择合理的聚类数量K值；最后，根据聚类结果对不同类别的用户画像，分析不同群体用户的特征。
+    针对数据进行探索、预处理和粗特征提取，本文将21天监测数据与APP类别辅助表进行左连接，发现原始数据存在一定的错误、冗余及缺失，了解到日志条数、活跃用户数、活跃APP数的总体情况，分析了APP类别、类型、数目之间的关联、对于用户使用时长、使用频次、上下行流量进行数据清洗与异常值检测，最后提出了关于数据的洞察与直觉，提出了基于使用时长、使用流量、使用频次的统计量简易用户模型。
 
-    \keywords{\TeX{}\quad  图片\quad   表格\quad  公式}
+    针对问题一，首先采用统计量对用户进行量化，选择前7日各类APP总时长、频次、上下行流量作为初始量化特征，采用主成分分析法将80维特征降至3维；然后分别采用原型（K-Means++）、密度（DBSCAN）、层次（BIRCH+AGNES）三种聚类算法对用户进行聚类，对于K-Means++以及DBSCAN遵循“肘部法则”选择合理的聚类数量K值；最后，采用三种内部评价指标、t-SNE二维散点图及PCA三维散点图对聚类结果进行评价，根据K-Means++聚类结果对不同类别的用户画像，了解到各个用户群体对各类APP的使用情况以及青睐程度。
+
+    针对问题二，本文提出了两类基于滑动窗的下游任务预训练模型的系统框架，对于其中第一种进行实现、分析，即将第1～10天作为训练集特征，第11天作为训练集标签。采用网格搜索、交叉验证对于建立的KNN最近邻、LogisticRegression、随机森林、XGBoost算法进行超参数调整。最后，对于分类问题，正确率为68.4\%，对于回归问题，在从未见过的测试数据上，NMSE为0.932。
+    \keywords{聚类分析\quad  K-Means++\quad   DBSCAN\quad  BIRCH\quad AGNES\quad KNN\quad 逻辑回归\quad 随机森林\quad XGBoost\quad 预训练\quad 滑动窗\quad 时间序列\quad 监督学习\quad 无监督学习\quad 迁移学习\quad}
 \end{abstract}
 
 %目录
@@ -43,20 +46,6 @@
 
 \pagestyle{mainmatterstyle}
 \setcounter{page}{1}
-\section{问题重述}
-
-\subsection{问题背景}
-
-智能手机已成为现代社会人们生活不可或缺的一部分，其普及和发展给人们带来了巨大的生活便利和娱乐享受。近年中国智能手机市场品牌竞争进一步加剧，中国超越美国成为全球第一大智能手机市场。随着智能手机市场快速增长，智能手机用户群体愈发多样，智能手机软件满目琳琅，研究智能手机用户的行为模式和使用偏好对于理解用户需求、预测用户行为和优化产品与服务具有重要意义。通过对智能手机用户监测数据的分析，可以为智能手机制造商、软件开发者、广告商和营销人员等提供有益的信息及有价值的洞察，指导他们制定战略和决策，更好地贴合用户需求并提供更佳的用户体验。
-
-\subsection{问题重述}
-
-\begin{description}
-    \item[问题一] 针对问题一，赛题要求(1)根据用户常用所属的20类APP的数据对用户聚类，(2)对不同类别的用户画像，分析不同群体用户的特征。
-    \item[]
-\end{description}
-
-\newpage
 \section{数据探索、预处理与特征提取}
 
 \subsection{符号说明与数据概览}
@@ -728,8 +717,8 @@ $T$类APP：2号 $\approx$ 0号 $\ge$ 4号 $\approx$ 1号 $\ge$ 3号
 
 由于12～21天属于测试集，不可泄漏参与训练，因此天然缺失构建$n=10$的6号、3号求解框架，如果选取$n=3$或许不符合以7天为周期的社会性活动常识。因此，本文折衷资料数目与特征数目，提出了两种求解框架进行模式识别、特征挖掘：
 \begin{enumerate}
-    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$1$天的使用时长（标量），并通过预训练模型执行下游任务：滑动窗口覆盖21天，如\cref{fig:pipeline1}。
-    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$m$天的使用时长（向量），并通过预训练模型执行下游任务：滑动窗口覆盖21天，如\cref{fig:pipeline2}。
+    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$1$天的使用时长（标量），并通过预训练模型执行上游任务：滑动窗口覆盖21天，如\cref{fig:pipeline1}。
+    \item 输入某用户前$n$天的使用时长（向量），输出一个用户后$m$天的使用时长（向量），并通过预训练模型执行上游任务：滑动窗口覆盖21天，如\cref{fig:pipeline2}。
 \end{enumerate}
 
 \begin{figure}[!htbp]
@@ -777,24 +766,29 @@ LogisticRegression也称“对数概率回归”，属于一种基于概率的�
 
 \subsubsection{建立XGBoost集成回归预测模型}
 
-XGBoost也是以决策树为基础的模型，采用梯度提升对多棵决策树进行组合，在准确率、运算速度、操作便利性上表现优秀。采用网格搜素超参数，在训练资料上对模型采用10折交叉验证，选择超参数如\cref{tab:011}时，在预训练资料上（给定1～10天，预测第11天）NMSE损失最小可达$0.8262$。
+XGBoost也是以决策树为基础的模型，采用梯度提升对多棵决策树进行组合，在准确率、运算速度、操作便利性上表现优秀。采用网格搜素超参数，在训练资料上对模型采用10折交叉验证，选择超参数如\cref{tab:011}时，在预训练资料上（给定1～10天，预测第11天）NMSE损失最小可达$1.52$。
 
 \begin{table}[!htbp]
-    \caption{xgboost最佳超参数}\label{tab:011} \centering
+    \caption{XGBoost最佳超参数}\label{tab:011} \centering
     \begin{tabular}{cccccc}
         \toprule[1.5pt]
         超参数             & 取值 & 超参数          & 取值 & 超参数                  & 取值  \\
         \midrule[1pt]
-        $n\_estimators$ & 10 & $max\_depth$ & 3  & $min\_child\_weight$ & 1.0 \\
+        $n\_estimators$ & 30 & $max\_depth$ & 7  & $min\_child\_weight$ & 1.0 \\
         \bottomrule[1.5pt]
     \end{tabular}
 \end{table}
 
-\subsection{运行结果}
-
+\subsection{运行结果与改进方向}
 \subsubsection{运行结果}
 
-在选择最优的预训练模型上，经测试，在下游任务1“预测第12~21天是否会使用该类APP”上随机森林算法正确率高达；在下游任务2“预测第12~21天用户使用a类APP的有效日均使用时长”中XGboost的NMSE低至。
+对于上游任务一“预测第12～21天是否会使用该类APP”，采用随机森林算法以第12天预测结果作为12～21天的代表，正确率仅有$68.4\%$。
+
+对于上游任务二“预测第12～21天用户使用a类APP的有效日均使用时长”，采用XGBoost算法以滑动窗的形式依次获得12～21天A类APP每日有效使用时长，而后获得平均日均使用时长，NMSE低至0.932。
+
+\subsubsection{改进方向}
+
+未来的改进措施可以考虑将回归问题退化为分类问题，选择合适的阈值，当阈值大于某设定值时，记为使用该类APP，否则视为无效使用。同时，可以考虑Voting、Stacking等集成方式进一步提升模型效能。
 
 %参考文献
 \newpage
@@ -2231,24 +2225,537 @@ plt.savefig("../Thesis/figures/plot_profile.pdf",
     \section{问题二：训练资料代码}
 
     \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
 
+# In[28]:
+
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn import metrics
+from sklearn.cluster import DBSCAN
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+
+# # 特征建立
+
+# In[29]:
+
+
+days = {i: pd.read_pickle(f'../Datasets/day{str(i).zfill(2)}.pkl')
+        for i in range(1, 22)}
+
+
+# In[30]:
+
+
+dfs = []
+for i in range(1, 22):
+    pt = pd.DataFrame(pd.DataFrame(days[i].pivot_table(
+        index='uid',
+        values='duration',
+        columns='app_class',
+        aggfunc=np.sum
+    )['a']).to_records())
+    pt['day'] = i
+    dfs.append(pt)
+
+features = pd.DataFrame(pd.concat(dfs, ignore_index=True).pivot_table(
+    index='uid',
+    values='a',
+    columns='day',
+).fillna(0).to_records())
+
+
+# In[31]:
+
+
+# features_q2 = features.merge(
+#     features_user2cluster, on='uid', how='left').fillna(404)
+
+# features_q2['cluster'] = features_q2['cluster'].astype('int')
+# features_q2['cluster'] = features_q2['cluster'].astype('str')
+# features_q2['cluster'] = features_q2['cluster'].replace({
+#     '0': 'AA', '1': 'BB', '2': 'CC', '3': 'DD', '4': 'EE', '404': 'NaN'
+# })
+
+
+# In[35]:
+
+
+features.to_pickle('../Datasets/features_q2.pkl')
+
+
+# In[36]:
+
+
+features
     \end{lstlisting}
 
     \section{问题二：分类问题代码}
-
     \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[1]:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_validate
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn import metrics
+from sklearn.cluster import DBSCAN
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+
+# In[2]:
+
+
+df = pd.read_pickle('../Datasets/features_q2.pkl')
+
+
+# # 分类问题
+
+# ## KNN
+
+# In[ ]:
+
+
+cols = [str(i) for i in range(1, 11)]
+X = df[cols].values
+y = df['11'].apply(lambda x: 1 if x > 0 else 0).values
+
+kf = KFold(n_splits=8, shuffle=True, random_state=42)
+param_grid = {"n_neighbors": np.arange(1, 40, 2)}
+
+knn_cv = GridSearchCV(KNeighborsClassifier(), param_grid, cv=kf)
+knn_cv.fit(X, y)
+
+print("Tuned knn paramaters: {}".format(knn_cv.best_params_))
+print("Tuned knn score: {}".format(knn_cv.best_score_))
+
+
+# ## LogisticRegression
+
+# In[ ]:
+
+
+cols = [str(i) for i in range(1, 11)]
+X = df[cols].values
+y = df['11'].apply(lambda x: 1 if x > 0 else 0).values
+
+logistic_regression = LogisticRegression()
+cv_results = cross_validate(logistic_regression, X, y, cv=8)
+
+
+# In[ ]:
+
+
+sorted(cv_results.keys())
+
+
+# In[ ]:
+
+
+cv_results['test_score'].mean()
+
+
+# ## 随机森林
+
+# In[7]:
+
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+import matplotlib.pyplot as plt
+
+cols = [str(i) for i in range(1, 11)]
+X = df[cols].values
+y = df['11'].apply(lambda x: 1 if x > 0 else 0).values
+
+rf = RandomForestClassifier(random_state=2)
+
+# Define the dictionary 'params_rf'
+params_rf = {
+    'n_estimators': [50, 60, 70, 80],
+    'min_samples_leaf': [6, 7, 8],
+    'max_depth': [11, 12, 13]
+}
+
+# Instantiate grid_rf
+grid_rf = GridSearchCV(estimator=rf,
+                       param_grid=params_rf,
+                       scoring='accuracy',
+                       cv=3,
+                       verbose=1,
+                       n_jobs=-1)
+
+grid_rf.fit(X, y)
+
+# Extract the best estimator
+best_model = grid_rf.best_estimator_
+grid_rf.best_params_
+
+
+# In[6]:
+
+
+grid_rf.best_score_
+
+
+# # 模型存储
+
+# In[8]:
+
+
+import joblib
+
+joblib.dump(best_model, "../Datasets/best_model_rf.joblib")
 
     \end{lstlisting}
 
     \section{问题二：回归问题代码}
 
     \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[1]:
+
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.model_selection import cross_validate
+from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.model_selection import KFold, cross_val_score
+from sklearn.metrics import confusion_matrix, classification_report
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.model_selection import GridSearchCV
+from xgboost import XGBRegressor
+
+from typing import Dict
+from tqdm.auto import tqdm
+
+from sklearn.decomposition import PCA
+from sklearn.cluster import KMeans
+from sklearn import metrics
+from sklearn.cluster import DBSCAN
+
+import numpy as np
+import random
+import pandas as pd
+import ydata_profiling
+
+import scienceplots
+import matplotlib.pyplot as plt
+import seaborn as sns
+import matplotlib
+
+import torch
+import os
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters()
+sns.set_style("whitegrid")
+sns.set_palette("RdBu")
+sns.set(
+    rc={'text.usetex': True},
+    font="serif",
+    font_scale=1.2
+)
+
+
+# In[2]:
+
+
+df = pd.read_pickle('../Datasets/features_q2.pkl')
+
+
+# # 回归问题
+
+# In[3]:
+
+
+cols = [str(i) for i in range(1, 11)]
+X = df[cols]
+y = df['11']
+
+
+# In[4]:
+
+
+def NMSE(y_pred, y_true):
+    return (((y_pred-y_true)**2).sum()/((y_pred-np.mean(y_true))**2).sum())**(1/2)
+
+
+# In[5]:
+
+
+import itertools
+
+# 準備用於調整的參數【第二次迭代，粒度更细】
+param_space = {
+    'n_estimators': [10, 20, 30],
+    'max_depth': [3, 5, 7],
+    'min_child_weight': [1.0, 2.0, 4.0],
+}
+
+# 產生超參數 max_depth 與 min_child_weight 的所有組合
+param_combinations = itertools.product(param_space['n_estimators'],
+                                       param_space['max_depth'],
+                                       param_space['min_child_weight'])
+
+# 用 List 保存各參數組合以及各組合的分數
+params = []
+scores = []
+
+# 對各參數組合的模型進行交叉驗證
+# 即网格搜索（Grid Search），也就是超参数的暴力搜索
+for n_estimators, max_depth, min_child_weight in param_combinations:
+
+    score_folds = []
+    # 進行交叉驗證
+    # 將訓練資料分成10分，其中一個作為驗證資料，並不斷輪替交換
+    kf = KFold(n_splits=10, shuffle=True, random_state=654321)
+    for tr_idx, va_idx in kf.split(X):
+        # 將資料分為訓練資料與驗證資料
+        tr_x, va_x = X.iloc[tr_idx], X.iloc[va_idx]
+        tr_y, va_y = y.iloc[tr_idx], y.iloc[va_idx]
+
+        # 建立 xgboost 模型並進行訓練
+        model = XGBRegressor(n_estimators=n_estimators, random_state=123456,
+                             max_depth=max_depth, min_child_weight=min_child_weight)
+        model.fit(tr_x, tr_y)
+
+        # 驗證資料的預測值與 logloss 評價指標
+        va_pred = model.predict(va_x)
+        score_folds.append(NMSE(va_pred, va_y))
+
+    # 將各 fold 的評價指標進行平均
+    score_mean = np.mean(score_folds)
+
+    # 保存參數的組合以及其相對應的評價指標
+    params.append({'n_estimators': n_estimators,
+                  'max_depth': max_depth, 'min_child_weight': min_child_weight})
+    scores.append(score_mean)
+
+# 找出將評價指標分數最佳的參數組合
+best_idx = np.argsort(scores)[0]
+best_param = params[best_idx]
+
+print(best_param)
+
+
+# In[7]:
+
+
+scores
+
+
+# # 模型存储
+
+# In[8]:
+
+
+model = XGBRegressor(n_estimators=30,
+                     random_state=123456,
+                     max_depth=7,
+                     min_child_weight=1.0)
+
+model.fit(X, y)
+
+
+# In[10]:
+
+
+model.predict(X)
+
+
+# In[9]:
+
+
+import joblib
+
+joblib.dump(model, "../Datasets/best_model_xg.joblib")
+
+
+# In[ ]:
+
+
+
+
 
     \end{lstlisting}
 
     \section{问题二： 模型评价代码}
-
     \begin{lstlisting}[language=Python]
+#!/usr/bin/env python
+# coding: utf-8
+
+# # 载入套件
+
+# In[11]:
+
+from sklearn.model_selection import train_test_split from sklearn.ensemble
+import RandomForestClassifier from sklearn.metrics import accuracy_score from
+sklearn.model_selection import cross_validate from sklearn.linear_model import
+LogisticRegression from sklearn.preprocessing import OneHotEncoder from
+sklearn.model_selection import KFold, cross_val_score from sklearn.metrics
+import confusion_matrix, classification_report from sklearn.model_selection
+import train_test_split from sklearn.neighbors import KNeighborsClassifier from
+sklearn.model_selection import GridSearchCV
+
+from typing import Dict from tqdm.auto import tqdm
+
+from sklearn.decomposition import PCA from sklearn.cluster import KMeans from
+sklearn import metrics from sklearn.cluster import DBSCAN
+
+import numpy as np import random import pandas as pd import ydata_profiling
+
+import scienceplots import matplotlib.pyplot as plt import seaborn as sns
+import matplotlib
+
+import torch import os import joblib
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+pd.plotting.register_matplotlib_converters() sns.set_style("whitegrid")
+sns.set_palette("RdBu") sns.set( rc={'text.usetex': True}, font="serif",
+font_scale=1.2 )
+
+df = pd.read_pickle('../Datasets/features_q2.pkl')
+
+data = df[[str(i) for i in range(12, 22)]] y_true_q21 =
+pd.DataFrame(data.sum(axis=1).apply(lambda x: 1 if x > 0 else 0)) y_true_q22 =
+pd.DataFrame(data.sum(axis=1)/10)
+
+# In[12]:
+
+def NMSE(y_pred, y_true): return
+(((y_pred-y_true)**2).sum()/((y_pred-np.mean(y_true))**2).sum())**(1/2)
+
+# # 分类
+
+# In[4]:
+
+loaded_rf = joblib.load("../Datasets/best_model_rf.joblib")
+
+# In[5]:
+
+y_pred_q21 = loaded_rf.predict( df[[str(i) for i in range(2, 12)]].values )
+
+# In[6]:
+
+y_pred_q21.shape
+
+# In[7]:
+
+accuracy_score(y_true_q21, y_pred_q21)
+
+# # 回归
+
+# In[19]:
+
+loaded_xg = joblib.load("../Datasets/best_model_xg.joblib")
+
+# In[20]:
+
+for i in range(12, 22): start_day = i-10 cols = [str(i) for i in
+range(start_day, i)] X_test = df[cols].values y_pred =
+loaded_xg.predict(X_test) print(y_pred.max()) df[str(i)] = y_pred
+
+y_pred_q22 = pd.DataFrame(df[[str(i) for i in range(12, 22)]].sum(axis=1)/10)
+
+# In[22]:
+
+NMSE(y_pred_q22, y_true_q22)
+
+# # 新·分类
+
+# In[37]:
+
+y_pred_q21_new = y_pred_q22[0].apply(lambda x: 1 if x > 300 else 0)
+
+# In[38]:
+
+accuracy_score(y_pred_q21_new, y_true_q21)
+
+# In[ ]:
+
+
 
     \end{lstlisting}
 
